@@ -35,6 +35,12 @@ const NavBar = () => {
           >
             Reels
           </Link>
+          <Link 
+            to="/apitesting"
+            className="text-gray-700 hover:text-blue-500 transition duration-300"
+          >
+            API Testing
+          </Link>
         </div>
 
         {/* Login Button */}
@@ -57,13 +63,13 @@ const NavBar = () => {
           Home
         </Link>
         <Link
-          to="/Feeds"
+          to="/feeds"
           className="text-gray-700 hover:text-blue-500 transition duration-300"
         >
           Feeds
         </Link>
         <Link
-          to="/Reels"
+          to="/reels"
           className="text-gray-700 hover:text-blue-500 transition duration-300"
         >
           Reels

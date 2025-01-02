@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://scroller-github-io.vercel.app', '127.0.0.1']
 
 
 # Application definition
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-CORS_ALLOWED_ORIGINS = ['https://scroller-github-io.vercel.app']
+CORS_ALLOWED_ORIGINS = ['https://scroller-github-io.vercel.app', 'http://localhost:5173']
 
 
 MIDDLEWARE = [

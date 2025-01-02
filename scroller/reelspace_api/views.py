@@ -9,7 +9,6 @@ from .serializers import CustomUserSerializer, FeedSerializer, ReelSerializer
 # Create your views here.
 
 class User_By_Id(APIView):
-    permission_classes = {}
 
     def get(self, request, pk):
         try:

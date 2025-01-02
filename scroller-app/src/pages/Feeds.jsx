@@ -26,7 +26,7 @@ const Feeds = () => {
 
           <div className="mt-4">
             <p className="text-gray-700">
-              This is an example post text. Here the user can share their thoughts, photos, or links.
+              Content
             </p>
             <img 
               src="https://via.placeholder.com/600x400" 
@@ -67,7 +67,7 @@ const Feeds = () => {
 
           <div className="mt-4">
             <p className="text-gray-700">
-              Here's another post. The user can share their thoughts, feelings, or updates here.
+              Content
             </p>
             <img 
               src="https://via.placeholder.com/600x400" 
