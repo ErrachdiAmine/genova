@@ -42,7 +42,7 @@ const Signup = () => {
         {/* Signup Form */}
         <form onSubmit={handleSubmit} method='POST'>
           <div className="mb-4">
-            <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+            <label htmlFor="firstname" className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
             <input 
               type='text' 
               id="firstname"
@@ -54,7 +54,7 @@ const Signup = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+            <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
             <input 
               type="text" 
               id="lastname" 
