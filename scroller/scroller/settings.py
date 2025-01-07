@@ -1,3 +1,7 @@
+from datetime import timedelta
+from pathlib import Path
+
+
 """
 Django settings for scroller project.
 
@@ -10,7 +14,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,7 +47,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-CORS_ALLOWED_ORIGINS = ['https://scroller-github-io.vercel.app', 'http://localhost:5173']
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ],
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Customize as per your needs
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',  # Default algorithm
+}
+
+
+CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
 
 
 MIDDLEWARE = [
@@ -84,10 +103,15 @@ WSGI_APPLICATION = 'scroller.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
+    #SETTING UP MYSQL
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'core_db',
+        'USER': 'errachdi',
+        'PASSWORD': '1234AAfor!!',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        }
 }
 
 

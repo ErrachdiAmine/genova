@@ -1,18 +1,14 @@
 from rest_framework import serializers
-from reelspace.models import CustomUser, Feed, Reel
+from reelspace.models import *
 
-class CustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ('id', 'firstname', 'lastname', 'email', 'password')
 
-class FeedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feed
-        fields = ('id', 'user', 'title', 'description', 'content')
 
-class ReelSerializer(serializers.ModelSerializer):
+#serialize the User model
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Reel
-        fields = ('id', 'user', 'title', 'description', 'reel')
-    
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+        extra_kwargs = {'password': {'write_only': False}}
+        
+
+

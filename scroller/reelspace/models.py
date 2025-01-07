@@ -1,43 +1,36 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
 # Create your models here.
 
-contentOptions = (
-    ('text', 'text'),
-    ('image', 'image'),
-    ('video', 'video')
-)
 
-class CustomUser(models.Model):
-    firstname = models.CharField(max_length=25, unique=False)
-    lastname = models.CharField(max_length=25, unique=False)
-    email = models.EmailField(max_length=100, unique=True, null=True)
-    password = models.CharField(max_length=100, unique=False, null=True)
-    signed_at = models.DateTimeField(auto_now_add=True)
+#create abstract user
+
+class User(AbstractUser):
+    email = models.EmailField(max_length=255, unique=True)
+    password = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     
-    def __str__(self):
-        return f'User Information: {self.firstname} {self.lastname}'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']   
+
+    
+
+    groups = models.ManyToManyField(
+        'auth.Group', 
+        related_name='reelspace_user_set',  # custom reverse accessor for groups
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission', 
+        related_name='reelspace_user_permissions_set',  # custom reverse accessor for permissions
+        blank=True
+    )
 
 
-class Feed(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    description = models.TextField(max_length=2200)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    content = models.CharField(choices=contentOptions, default='video', max_length=255)
-
-    class Meta:
-        ordering = ['-created_at']
 
 
-class Reel(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    description = models.TextField(max_length=2200)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    reel = models.FileField()
-
-    class Meta:
-        ordering = ['-created_at']
