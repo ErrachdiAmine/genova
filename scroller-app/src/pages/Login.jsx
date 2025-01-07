@@ -1,9 +1,11 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
-
+import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { loginUser } from '../auth';
 
 
 const Login = () => {
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -12,13 +14,14 @@ const Login = () => {
         {/* Login Form */}
         <form action="#" method="POST">
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
             <input 
-              type="email" 
-              id="email" 
-              name="email" 
+              type="text" 
+              id="username" 
+              name="username" 
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              placeholder="Enter your email" 
+              placeholder="Enter your username" 
+              autoComplete='on'
               required 
             />
           </div>
@@ -31,6 +34,7 @@ const Login = () => {
               name="password" 
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
               placeholder="Enter your password" 
+              autoComplete='off'
               required 
             />
           </div>
@@ -42,7 +46,6 @@ const Login = () => {
             </div>
             <a href="#" className="text-sm text-blue-500 hover:text-blue-700">Forgot Password?</a>
           </div>
-
           <button 
             type="submit" 
             className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
@@ -50,7 +53,6 @@ const Login = () => {
             Login
           </button>
         </form>
-
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">Don't have an account?</p>
           <Link to="/Register" className="text-blue-500 hover:text-blue-700">Sign up</Link>

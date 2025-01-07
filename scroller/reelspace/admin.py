@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Feed, Reel
-# Register your models here.
+from .models import User
 
 
-admin.site.register(CustomUser) # Register the User
-admin.site.register(Feed) # Register the Feeds
-admin.site.register(Reel) # Register the Reels
+admin.site.register(User)
