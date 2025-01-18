@@ -7,7 +7,6 @@ import Reels from "./pages/Reels"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import Signup from "./pages/Signup"
-import ApiDataTest from "./pages/ApiDataTest"
 
 function App() {
 
@@ -18,7 +17,6 @@ function App() {
         <Route path="/Reels" element={<Reels/>}/>
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Signup/>}/>
-        <Route path="/apitesting" element={<ApiDataTest/>}/>
         <Route path="*" element={<NotFound/>}/>
       </Route>
   ))

@@ -35,12 +35,6 @@ const NavBar = () => {
           >
             Reels
           </Link>
-          <Link 
-            to="/apitesting"
-            className="text-gray-700 hover:text-blue-500 transition duration-300"
-          >
-            API Testing
-          </Link>
         </div>
 
         {/* Login Button */}
