@@ -7,8 +7,7 @@ from reelspace.models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': False}}
+        fields = ('id', 'first_name', 'last_name', 'username', 'email', 'password')
         
 
 

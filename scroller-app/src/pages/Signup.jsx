@@ -7,7 +7,8 @@ import { useState, useEffect } from 'react'
 
 
 const Signup = () => {
-
+  const [firstname, setFirstName] = useState('')
+  const [lastname, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -35,6 +36,8 @@ const Signup = () => {
     setSuccess(false)
 
     const user = {
+      first_name: firstname,
+      last_name: lastname,
       email: email,
       username: username,
       password: password
@@ -62,31 +65,56 @@ const Signup = () => {
 
         {/* Signup Form */}
         <form onSubmit={handleSubmit}>
-
+          <div className="mb-4">  
+            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="firstname">First Name</label>
+            <input
+            className="block w-full p-3 border border-gray-300 rounded-lg mb-4"
+            type="text"
+            id="firstname"
+            name="firstname"
+            value={firstname}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First Name"
+            required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="lastname">Last Name</label>
+            <input
+            className="block w-full p-3 border border-gray-300 rounded-lg mb-4"
+            type="text"
+            id="lastname"
+            name="lastname"
+            value={lastname}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last Name"
+            required
+            />
+          </div>
           <div className='mb-4'>
             <label htmlFor="email">Email Address</label>
             <input type="email" 
-                id='email'
-                name='email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:
-                outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your email address"
-                required
+            id='email'
+            name='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:
+            outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your email address"
+            required
             />
           </div>
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
             <input 
-              type='text' 
-              id="username"
-              name="username" 
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              placeholder="Enter your username" 
-              required 
+            type='text' 
+            id="username"
+            name="username" 
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            placeholder="Enter your username" 
+            required 
             />
           </div>
           <div className="mb-4">
