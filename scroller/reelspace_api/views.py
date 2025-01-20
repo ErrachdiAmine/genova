@@ -22,7 +22,7 @@ class UserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class UserDetailView(APIView):
+class UserDetailsView(APIView):
     def get(self, request, pk):
         try:
             user = User.objects.get(pk=pk)

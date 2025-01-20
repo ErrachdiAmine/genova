@@ -1,3 +1,9 @@
+from rest_framework_simplejwt.views import (
+  TokenObtainPairView,
+  TokenRefreshView,
+)
+
+
 """
 URL configuration for scroller project.
 
@@ -22,5 +28,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('reelspace.urls'), name='reelspace'),
     path('api/', include('reelspace_api.urls'), name='reelspace_api_list'),
-
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

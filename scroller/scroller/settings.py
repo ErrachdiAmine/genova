@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['https://scroller-github-io.vercel.app', '127.0.0.1']
 INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'corsheaders',
     'reelspace',
     'reelspace_api',
@@ -61,6 +62,14 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',  # Default algorithm
 }
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+]
 
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
