@@ -14,11 +14,9 @@ class User(AbstractUser):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']   
-
-    
+    USERNAME_FIELD = 'last_name'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+   
 
     groups = models.ManyToManyField(
         'auth.Group', 
@@ -30,6 +28,8 @@ class User(AbstractUser):
         related_name='reelspace_user_permissions_set',  # custom reverse accessor for permissions
         blank=True
     )
+
+
 
 
 
