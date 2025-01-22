@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 import { loginUser } from '../auth';
 
 
@@ -8,25 +9,38 @@ const Login = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const user = {
     username: username,
     password: password
   }
 
-  const loginUser = async () => {
-    const token = await fetch('http://localhost:8000/api/token/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
-    const data = await token.json()
-    console.log(data)
-  }
+  const navigate = useNavigate();
 
-    
+  
+  const loginUser = async (e) => {
+
+    e.preventDefault();
+
+    const api_endpoint = 'http://127.0.0.1:8000/api/token/'
+    try {
+      
+      const response = await axios.post(api_endpoint, user)
+      console.log(response.data)
+      const token = response.data.access;
+      if (token) {
+        localStorage.setItem('token', token);
+      } else {
+        setError('Invalid credentials');
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
+  
+  }}
 
 
   return (

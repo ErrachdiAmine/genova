@@ -24,16 +24,10 @@ const NavBar = () => {
             Home
           </Link>
           <Link
-            to="/Feeds"
+            to="/Posts"
             className="text-gray-700 hover:text-blue-500 transition duration-300"
           >
-            Feeds
-          </Link>
-          <Link
-            to="/Reels"
-            className="text-gray-700 hover:text-blue-500 transition duration-300"
-          >
-            Reels
+            Posts
           </Link>
         </div>
 
@@ -60,13 +54,7 @@ const NavBar = () => {
           to="/feeds"
           className="text-gray-700 hover:text-blue-500 transition duration-300"
         >
-          Feeds
-        </Link>
-        <Link
-          to="/reels"
-          className="text-gray-700 hover:text-blue-500 transition duration-300"
-        >
-          Reels
+          Posts
         </Link>
       </div>
     </nav>
