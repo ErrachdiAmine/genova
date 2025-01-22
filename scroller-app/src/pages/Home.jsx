@@ -9,10 +9,10 @@ const Home = () => {
         <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Scroller!</h1>
         <p className="text-lg text-gray-600 mb-6">This is your place to discover and explore new content.</p>
         <Link
-          to="/Reels"
+          to="/Posts"
           className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
         >
-          Start Scrolling!
+          Start here!
         </Link>
       </div>
     </div>

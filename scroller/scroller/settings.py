@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://scroller-github-io.vercel.app', '127.0.0.1']
+ALLOWED_HOSTS = ['scroller-github-io.vercel.app', '127.0.0.1']
 
 
 # Application definition
@@ -62,6 +62,9 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',  # Default algorithm
 }
+
+AUTH_USER_MODEL = 'reelspace.User'
+
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",

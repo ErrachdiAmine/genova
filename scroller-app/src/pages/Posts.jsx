@@ -2,11 +2,11 @@ import React from 'react'
 
 
 
-const Feeds = () => {
+const Posts = () => {
   return (
 
     <div className='min-h-screen bg-gray-100 p-4'>
-      <h1 className="text-4xl text-center text-gray-800 font-semibold mb-8">Feeds</h1>
+      <h1 className="text-4xl text-center text-gray-800 font-semibold mb-8">Posts</h1>
 
       {/* Feed Posts */}
       <div className="space-y-6">
@@ -97,4 +97,4 @@ const Feeds = () => {
   )
 }
 
-export default Feeds
+export default Posts
