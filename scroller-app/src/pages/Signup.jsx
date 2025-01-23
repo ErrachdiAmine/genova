@@ -1,8 +1,10 @@
 import React from 'react'
-import { Link, useAsyncError } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { useState, useEffect } from 'react'
+import Loading from '../components/loading';
+import { useState } from 'react';
+import axios from 'axios';
+
 
 
 
@@ -13,10 +15,8 @@ const Signup = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirm_password, setConfirmPassword] = useState('')
-
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
   
   const navigate = useNavigate();
 
@@ -31,10 +31,6 @@ const Signup = () => {
 
     const api_endpoint = 'http://127.0.0.1:8000/api/users/'
 
-    setLoading(true)
-    setError(null)
-    setSuccess(false)
-
     const user = {
       first_name: firstname,
       last_name: lastname,
@@ -42,25 +38,29 @@ const Signup = () => {
       username: username,
       password: password
       }
-    
+
     try {
-      const response = await axios.post(api_endpoint, user) 
-      alert('Success!')
-      setSuccess(true)
+      const response = await axios.post(api_endpoint, user)
       navigate('/Login')
-
-      } catch (error) {
-        console.error(error)
-
-      } finally {
-        setLoading(false)
-      }
-    }
-  
+      
+      } catch (err) {
+        if (err.response) {
+          setError(err.response.data)
+        } else {
+          setError({'Error': 'error occured'})
+        }
         
+      } 
+  }
+
+  if (loading) {
+    return <Loading />
+  }
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white p-8 rounded-lg shadow-lg m-10 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Register</h2>
 
         {/* Signup Form */}
@@ -151,12 +151,19 @@ const Signup = () => {
             Register
           </button>
         </form>
+        {error && (
+          <div>
+            {error.username && <p>{error.username}</p>}
+            {error.email && <p>{error.email}</p>}
+          </div>
+        )}  
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">Have an account?</p>
           <Link to="/Login" className="text-blue-500 hover:text-blue-700">Login</Link>
         </div>
       </div>
-    </div>  )
+    </div>
+  )
 }
 
 export default Signup

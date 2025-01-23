@@ -3,12 +3,22 @@ from rest_framework.response import Response
 from rest_framework import status
 from reelspace.models import User
 from .serializers import UserSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 
 
 # Create your views here.
 
+@api_view(['GET'])
+def check_login_status(request):
+    if request.user.is_authenticated:
+        return Response({'is_logged_in': True, 'username': request.user.username})
+    return Response({'is_logged_in': False})
 
 class UserView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
