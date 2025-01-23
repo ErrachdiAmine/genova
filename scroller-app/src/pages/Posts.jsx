@@ -1,14 +1,11 @@
 import React from 'react'
 
-
-
 const Posts = () => {
   return (
-
     <div className='min-h-screen bg-gray-100 p-4'>
       <h1 className="text-4xl text-center text-gray-800 font-semibold mb-8">Posts</h1>
 
-      {/* Feed Posts */}
+      {/* Posts */}
       <div className="space-y-6">
         {/* Example Post 1 */}
         <div className="bg-white p-4 rounded-lg shadow-md">

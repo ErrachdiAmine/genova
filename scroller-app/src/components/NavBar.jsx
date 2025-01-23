@@ -1,7 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const NavBar = () => {
+
+  
+
   return (
     <nav className="bg-white shadow-md py-4 px-6">
       <div className="container mx-auto flex items-center justify-between">
@@ -51,7 +55,7 @@ const NavBar = () => {
           Home
         </Link>
         <Link
-          to="/feeds"
+          to="/Posts"
           className="text-gray-700 hover:text-blue-500 transition duration-300"
         >
           Posts
