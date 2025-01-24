@@ -6,6 +6,7 @@ import Posts from "./pages/Posts"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import Signup from "./pages/Signup"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 function App() {
 
