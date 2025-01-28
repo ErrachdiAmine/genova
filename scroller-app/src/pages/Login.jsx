@@ -26,24 +26,39 @@ const Login = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (expiresIn) {
+      const interval = setInterval(() => {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const timeRemaining = expiresIn - currentTime;
+
+        if (timeRemaining <= 60) {
+          refreshTokenHandler();
+        }
+      }, 5000); // Check every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [expiresIn]);
+
   const login = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     const api_endpoint = 'http://127.0.0.1:8000/api/token/';
 
     try {
       const response = await axios.post(api_endpoint, { username, password });
-      setLoading(false);
       const { access, refresh, expires_in } = response.data;
 
       setToken(access);
       setRefreshToken(refresh);
-      setExpiresIn(expires_in);
+      setExpiresIn(Math.floor(Date.now() / 1000) + expires_in);
 
       localStorage.setItem('token', access);
       localStorage.setItem('refreshToken', refresh);
-      localStorage.setItem('expiresIn', expires_in);
+      localStorage.setItem('expiresIn', Math.floor(Date.now() / 1000) + expires_in);
 
       navigate('/');
     } catch (err) {
@@ -71,11 +86,12 @@ const Login = () => {
       const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', { refresh: refreshToken });
       const { access, expires_in } = response.data;
       setToken(access);
-      setExpiresIn(expires_in);
+      setExpiresIn(Math.floor(Date.now() / 1000) + expires_in);
+
       localStorage.setItem('token', access);
-      localStorage.setItem('expiresIn', expires_in);
+      localStorage.setItem('expiresIn', Math.floor(Date.now() / 1000) + expires_in);
     } catch (error) {
-      console.error(error);
+      console.error('Token refresh failed. Logging out.');
       logout();
     }
   };
@@ -83,53 +99,60 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
-
-        {/* Check if the user is logged in */}
         {token ? (
-          <button
-            onClick={logout}
-            className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
-          >
-            Logout
-          </button>
-        ) : (
-          <form onSubmit={login}>
-            <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your username"
-                required
-              />
-            </div>
-
-            <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-
+          <>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Logout</h2>
             <button
-              type="submit"
-              className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+              onClick={logout}
+              className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
             >
-              Login
+              Logout
             </button>
-          </form>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
+            <form onSubmit={login}>
+              <div className="mb-4">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your username"
+                  required
+                />
+              </div>
+
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+              >
+                Login
+              </button>
+            </form>
+          </>
         )}
 
         {error && (
@@ -141,7 +164,9 @@ const Login = () => {
         {!token && (
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">Don't have an account?</p>
-            <Link to="/Register" className="text-blue-500 hover:text-blue-700">Sign up</Link>
+            <Link to="/Register" className="text-blue-500 hover:text-blue-700">
+              Sign up
+            </Link>
           </div>
         )}
       </div>
