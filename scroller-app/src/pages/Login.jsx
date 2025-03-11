@@ -1,65 +1,23 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { loginUser, logoutUser, getCurrentUser } from '../auth'; // Import all necessary functions
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const Login = () => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [token, setToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
-  const [expiresIn, setExpiresIn] = useState(null);
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedRefreshToken = localStorage.getItem('refreshToken');
-    const storedExpiresIn = localStorage.getItem('expiresIn');
-
-    if (storedToken && storedRefreshToken && storedExpiresIn) {
-      setToken(storedToken);
-      setRefreshToken(storedRefreshToken);
-      setExpiresIn(parseInt(storedExpiresIn, 10));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (expiresIn) {
-      const interval = setInterval(() => {
-        const currentTime = Math.floor(Date.now() / 1000);
-        const timeRemaining = expiresIn - currentTime;
-
-        if (timeRemaining <= 60) {
-          refreshTokenHandler();
-        }
-      }, 5000); // Check every 5 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [expiresIn]);
 
   const login = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const api_endpoint = 'http://127.0.0.1:8000/api/token/';
-
     try {
-      const response = await axios.post(api_endpoint, { username, password });
-      const { access, refresh, expires_in } = response.data;
-
-      setToken(access);
-      setRefreshToken(refresh);
-      setExpiresIn(Math.floor(Date.now() / 1000) + expires_in);
-
-      localStorage.setItem('token', access);
-      localStorage.setItem('refreshToken', refresh);
-      localStorage.setItem('expiresIn', Math.floor(Date.now() / 1000) + expires_in);
-
+      await loginUser(username, password); // Use the loginUser function
       navigate('/');
     } catch (err) {
       setLoading(false);
@@ -71,37 +29,31 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (user) {
+          setCurrentUser(user);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const logout = () => {
-    setToken(null);
-    setRefreshToken(null);
-    setExpiresIn(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('expiresIn');
-    navigate('/Login');
-  };
-
-  const refreshTokenHandler = async () => {
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', { refresh: refreshToken });
-      const { access, expires_in } = response.data;
-      setToken(access);
-      setExpiresIn(Math.floor(Date.now() / 1000) + expires_in);
-
-      localStorage.setItem('token', access);
-      localStorage.setItem('expiresIn', Math.floor(Date.now() / 1000) + expires_in);
-    } catch (error) {
-      console.error('Token refresh failed. Logging out.');
-      logout();
-    }
-  };
+    logoutUser(); // Use the logoutUser function
+    setCurrentUser(null);
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        {token ? (
+        {currentUser ? (
           <>
-            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Logout</h2>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{currentUser}</h2>
             <button
               onClick={logout}
               className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
@@ -161,7 +113,7 @@ const Login = () => {
           </div>
         )}
 
-        {!token && (
+        {!currentUser && (
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">Don't have an account?</p>
             <Link to="/Register" className="text-blue-500 hover:text-blue-700">

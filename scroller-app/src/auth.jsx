@@ -1,8 +1,8 @@
 import axios from 'axios';
+import * as jwt_decode from 'jwt-decode'; // Change to named import for JWT decoding
 
 const API_URL = 'http://127.0.0.1:8000'; // Your Django API URL
 
-// Send login credentials and get JWT tokens
 export const loginUser = async (username, password) => {
   const response = await axios.post(`${API_URL}/api/token/`, {
     username,
@@ -38,7 +38,17 @@ export const getAccessToken = () => {
   return localStorage.getItem('access_token');
 };
 
-// Log the user out by clearing stored tokens
+export const registerUser = async (firstname, lastname, email, username, password) => {
+  const response = await axios.post(`${API_URL}/api/users/`, {
+    first_name: firstname,
+    last_name: lastname,
+    email,
+    username,
+    password,
+  });
+  return response.data;
+};
+
 export const logoutUser = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
@@ -51,3 +61,20 @@ export const isTokenValid = () => {
   const decoded = jwt_decode(token);
   return decoded.exp * 1000 > Date.now();
 };
+
+// Send login credentials and get JWT tokens
+export const getCurrentUser = async () => {
+  const token = getAccessToken();
+  if (!token) {
+    console.log('No token found');
+    return null; // No user is logged in
+  }
+
+  const response = await axios.get('http://127.0.0.1:8000/api/check_login_status/', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  
+  return response.data.username; // Return the username of the logged-in user
+}

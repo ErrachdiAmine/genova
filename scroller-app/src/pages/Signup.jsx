@@ -1,9 +1,9 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Loading from '../components/loading';
 import { useState } from 'react';
-import axios from 'axios';
+import { registerUser } from '../auth'; // Import the registerUser function
 
 
 
@@ -29,7 +29,7 @@ const Signup = () => {
       return;  // Stop the form submission if passwords don't match
     }
 
-    const api_endpoint = 'http://127.0.0.1:8000/api/users/'
+    // const api_endpoint = 'http://127.0.0.1:8000/api/users/'; // This line can be removed
 
     const user = {
       first_name: firstname,
@@ -40,7 +40,7 @@ const Signup = () => {
       }
 
     try {
-      const response = await axios.post(api_endpoint, user)
+      const response = await registerUser(firstname, lastname, email, username, password); // Use the registerUser function
       navigate('/Login')
       
       } catch (err) {
