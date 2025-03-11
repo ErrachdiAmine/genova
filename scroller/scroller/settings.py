@@ -78,7 +78,11 @@ PASSWORD_HASHERS = [
 ]
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173"
+]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -90,6 +94,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'path.to.your.WSGIAuthorizationMiddleware',  # Add the custom WSGI authorization middleware
 ]
 
 ROOT_URLCONF = 'scroller.urls'
@@ -122,7 +127,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'core_db',
         'USER': 'errachdi',
-        'PASSWORD': '1234AAfor!!',
+        'PASSWORD': 'erra',
         'HOST': 'localhost',
         'PORT': '3306',
         }

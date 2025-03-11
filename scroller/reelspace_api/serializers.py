@@ -33,3 +33,20 @@ class UserSerializer(serializers.ModelSerializer):
         instance.set_password(validated_data.get('password', instance.password))
         instance.save()
         return instance
+    
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'body', 'author', 'created_at', 'updated_at')
+    
+    def create(self, validated_data):
+        post = Post.objects.create(**validated_data)
+        return post
+    
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.body = validated_data.get('body', instance.body)
+        instance.author = validated_data.get('author', instance.author)
+        instance.save()
+        return instance 
