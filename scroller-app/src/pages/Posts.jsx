@@ -1,78 +1,145 @@
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser } from '../auth'; // Import the function to get the current user
 import { getAccessToken } from '../auth';
 import axios from 'axios';
 
 const Posts = () => {
-  const [author, setAuthor] = useState(null); // State to hold the author
   const [postTitle, setPostTitle] = useState('');
-  const [postBody, setPostBody] = useState(''); 
+  const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]); // State to hold the list of posts
-
-
+  const [showForm, setShowForm] = useState(false); // Control form visibility
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getAccessToken(); // Retrieve the token
-    console.log(token);
-    const response = await axios.post('http://127.0.0.1:8000/api/posts/', {
-      body: postBody, 
-      title: postTitle
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        }
-      }); 
-    console.log('Post published:', response.data);
-    // Reset the form fields
-    setPostTitle('');
-    setPostBody(''); 
-    fetchPosts();
-  };
-
-  const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/posts/');
-      setPosts(response.data); // Set the posts in the state
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/posts/',
+        { title: postTitle, body: postBody },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Post published:', response.data);
+      // Reset the form fields and hide the form
+      setPostTitle('');
+      setPostBody('');
+      setShowForm(false);
+      fetchData(); // Fetch the updated list of posts
     } catch (error) {
-      console.log(error);
+      console.error('Error publishing post:', error);
     }
   };
 
-  return (
-    <div className='min-h-screen bg-gray-100 p-4'>
-      <h1 className="text-4xl text-center text-gray-800 font-semibold mb-8">Posts</h1>
+  const fetchData = async () => {
+    try {
+      const postsResponse = await axios.get('http://127.0.0.1:8000/api/posts/');
+      const postsData = postsResponse.data;
 
-      {/* Create a Post Block */}
-      <div className="space-y-6">
-        <form onSubmit={handleSubmit} className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800">Create a Post</h2>
-          <input
-            type="text"
-            value={postTitle}
-            onChange={(e) => setPostTitle(e.target.value)}
-            className="w-60 p-2 border border-gray-300 rounded-lg"
-            placeholder="Title"
-          />
-          <textarea
-            className="w-full p-2 border border-gray-300 rounded-lg"
-            placeholder="What's on your mind?"
-            value={postBody} 
-            onChange={(e) => setPostBody(e.target.value)}
-          />
-          <button type="submit" className="mt-2 p-2 bg-blue-500 text-white rounded-lg">
-            Post
+      // For each post, fetch the user details and add the username to the post object.
+      const postsWithUsernames = await Promise.all(
+        postsData.map(async (post) => {
+          try {
+            const userResponse = await axios.get(
+              `http://127.0.0.1:8000/api/users/${post.author}/`
+            );
+            return { ...post, username: userResponse.data.username };
+          } catch (error) {
+            console.error(`Error fetching user for post ${post.id}:`, error);
+            return { ...post, username: post.author };
+          }
+        })
+      );
+
+      // Sort posts so the newest posts (latest created_at) appear first
+      const sortedPosts = postsWithUsernames.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setPosts(sortedPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+
+  // Fetch posts on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
+      <h1 className="text-4xl text-center text-gray-800 font-bold mb-8">
+        Posts
+      </h1>
+
+      <div className="w-full max-w-3xl space-y-8">
+        {/* Toggle button for post creation */}
+        {!showForm && (
+          <button
+            onClick={() => setShowForm(true)}
+            className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition duration-200"
+          >
+            Create Post
           </button>
-        </form>
+        )}
+
+        {/* Post creation form */}
+        {showForm && (
+          <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Create a Post
+            </h2>
+            <input
+              type="text"
+              value={postTitle}
+              onChange={(e) => setPostTitle(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Title"
+            />
+            <textarea
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="What's on your mind?"
+              value={postBody}
+              onChange={(e) => setPostBody(e.target.value)}
+              rows="4"
+            />
+            <div className="flex justify-between">
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+              >
+                Post
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
         {/* Display Published Posts */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {posts.map((post) => (
-            <div key={post.id} className="p-4 bg-white rounded-lg shadow">
-              <h3 className="text-xl font-semibold">{post.title}</h3>
-              <p className="text-gray-700">{post.content}</p>
-              <p className="text-gray-500 text-sm">Posted by {post.author} on {new Date(post.created_at).toLocaleDateString()}</p>
+            <div
+              key={post.id}
+              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200"
+            >
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                {post.title}
+              </h3>
+              <p className="text-gray-700 mb-4">{post.body}</p>
+              <p className="text-sm text-gray-500">
+                Posted by <span className="font-medium">{post.username}</span> on{' '}
+                {new Date(post.created_at).toLocaleDateString()}  {new Date(post.created_at).toLocaleTimeString()}
+                
+                
+              </p>
             </div>
           ))}
         </div>

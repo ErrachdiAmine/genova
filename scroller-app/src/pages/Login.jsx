@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser, logoutUser, getCurrentUser } from '../auth'; // Import all necessary functions
+import { loginUser, logoutUser, getCurrentUser, isTokenValid } from '../auth'; // Import all necessary functions
 import { useState, useEffect } from 'react';
 
 const Login = () => {
@@ -47,6 +47,10 @@ const Login = () => {
     logoutUser(); // Use the logoutUser function
     setCurrentUser(null);
   }
+
+  const validToken = isTokenValid(); // Use the isTokenValid function
+
+  console.log(validToken);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

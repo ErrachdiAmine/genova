@@ -4,7 +4,7 @@ from rest_framework import status
 from reelspace.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
@@ -31,8 +31,7 @@ class UserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserDetailsView(APIView):
-    permission_classes = [IsAuthenticated]  # Require authentication for this view
-    authentication_classes = [JWTAuthentication]  # Add TokenAuthentication for authorization
+    permission_classes = [AllowAny]  # Require authentication for this view
 
     def get(self, request, pk):  # Ensure authorization is checked
         try:
@@ -57,7 +56,7 @@ class UserDetailsView(APIView):
             
 
 class PostsView(APIView):
-    permission_classes = [IsAuthenticated]  # Require authentication for this view
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Require authentication for this view
     authentication_classes = [JWTAuthentication]  # Add TokenAuthentication for authorization
     def get(self, request):
         posts = Post.objects.all()
@@ -67,6 +66,6 @@ class PostsView(APIView):
     def post(self, request):
         serializer = PostSerializer(data=request.data) 
         if serializer.is_valid():
-            serializer.save(author=request.user.id)
+            serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

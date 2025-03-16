@@ -1,7 +1,12 @@
 import axios from 'axios';
-import * as jwt_decode from 'jwt-decode'; // Change to named import for JWT decoding
+import { jwtDecode } from 'jwt-decode'; // Change to named import for JWT decoding
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'http://127.0.0.1:8000'; // Your Django API URL
+
+export const getAccessToken = () => {
+  return localStorage.getItem('access_token');
+};
 
 export const loginUser = async (username, password) => {
   const response = await axios.post(`${API_URL}/api/token/`, {
@@ -14,6 +19,7 @@ export const loginUser = async (username, password) => {
   }
   return response.data;
 };
+
 
 // Get a new access token using the refresh token
 export const refreshAccessToken = async () => {
@@ -33,10 +39,27 @@ export const refreshAccessToken = async () => {
   return response.data;
 };
 
-// Get the current access token
-export const getAccessToken = () => {
-  return localStorage.getItem('access_token');
+export const checkAndRefreshToken = async () => {
+  const token = getAccessToken();
+  if (!token) return;
+
+  const decoded = jwtDecode(token);
+  const expirationTime = decoded.exp * 1000;
+  const currentTime = Date.now();
+  const timeLeft = expirationTime - currentTime;
+
+  localStorage.setItem('timeLeft', timeLeft);
+
+  // Refresh the token if it will expire in the next 5 minutes
+  if (timeLeft < 5 * 60 * 1000) {
+    await refreshAccessToken();
+  }
 };
+
+// Check and refresh the token every 30 seconds
+setInterval(checkAndRefreshToken, 30 * 1000);
+// Get the current access token
+
 
 export const registerUser = async (firstname, lastname, email, username, password) => {
   const response = await axios.post(`${API_URL}/api/users/`, {
@@ -52,13 +75,14 @@ export const registerUser = async (firstname, lastname, email, username, passwor
 export const logoutUser = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
+
 };
 
 // Check if the token is valid (JWT decoding)
 export const isTokenValid = () => {
   const token = getAccessToken();
   if (!token) return false;
-  const decoded = jwt_decode(token);
+  const decoded = jwtDecode(token);
   return decoded.exp * 1000 > Date.now();
 };
 
