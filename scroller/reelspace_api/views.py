@@ -56,7 +56,7 @@ class UserDetailsView(APIView):
             
 
 class PostsView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Require authentication for this view
+    permission_classes = [AllowAny]  # Require authentication for this view
     authentication_classes = [JWTAuthentication]  # Add TokenAuthentication for authorization
     def get(self, request):
         posts = Post.objects.all()
@@ -69,3 +69,9 @@ class PostsView(APIView):
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete (self, request):
+        posts = Post.objects.all()
+        posts.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
