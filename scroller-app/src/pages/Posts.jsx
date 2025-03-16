@@ -9,31 +9,22 @@ const Posts = () => {
   const [postBody, setPostBody] = useState(''); 
   const [posts, setPosts] = useState([]); // State to hold the list of posts
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getCurrentUser(); // Get the current user
-        if (user) {
-          setAuthor(user); // Set the author in the state
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUser();
-  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getAccessToken(); // Retrieve the token
+    console.log(token);
     const response = await axios.post('http://127.0.0.1:8000/api/posts/', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       body: postBody, 
-      author: author,
       title: postTitle
-    }); 
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }); 
     console.log('Post published:', response.data);
     // Reset the form fields
     setPostTitle('');
