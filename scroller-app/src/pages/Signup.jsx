@@ -5,9 +5,6 @@ import Loading from '../components/loading';
 import { useState } from 'react';
 import { registerUser } from '../auth'; // Import the registerUser function
 
-
-
-
 const Signup = () => {
   const [firstname, setFirstName] = useState('')
   const [lastname, setLastName] = useState('')
