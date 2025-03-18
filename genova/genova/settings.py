@@ -1,5 +1,9 @@
 from datetime import timedelta
 from pathlib import Path
+import environ
+import os
+
+
 
 
 """
@@ -127,11 +131,24 @@ DATABASES = {
         'NAME': 'core_db',
         'USER': 'errachdi',
         'PASSWORD': 'erra',
-        'HOST': 'localhost',
+        'HOST': '0.0.0.0',
         'PORT': '3306',
         }
 }
 
+# Initialize environ
+env = environ.Env()
+
+# Read the .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# Use variables from .env
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env.bool('DEBUG', default=False)
+
+DATABASES = {
+    'default': env.db('DATABASE_URL')
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
