@@ -83,7 +83,7 @@ PASSWORD_HASHERS = [
 
 CORS_ALLOWED_ORIGINS = [
     "localhost:5173"
-    "ballast.proxy.rlwy.net:20953"
+    "https://genova-gsaa.onrender.com"
     "genova-github-io.vercel.app"
     
 ]
