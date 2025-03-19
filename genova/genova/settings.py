@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://localhost:5173/']
+ALLOWED_HOSTS = ['genova-gsaa.onrender.com']
 
 
 # Application definition
@@ -81,7 +81,7 @@ PASSWORD_HASHERS = [
 
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = ['https://genova-drab.vercel.app']
 
 
 MIDDLEWARE = [
