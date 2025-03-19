@@ -84,7 +84,7 @@ PASSWORD_HASHERS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://genova-ko1go9mlm-errachdi.vercel.app",
+    "https://genova-494lf3m15-errachdi.vercel.app",
     "https://genova-gsaa.onrender.com",
 ]
 
