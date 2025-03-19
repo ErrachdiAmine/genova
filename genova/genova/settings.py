@@ -128,10 +128,10 @@ DATABASES = {
     #SETTING UP MYSQL
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'core_db',
-        'USER': 'errachdi',
-        'PASSWORD': 'erra',
-        'HOST': '0.0.0.0',
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'YIbpSjvUuPmDnqkmNpZgblvpxvEBJYRT',
+        'HOST': 'mysql.railway.internal',
         'PORT': '3306',
         }
 }

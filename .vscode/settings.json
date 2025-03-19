@@ -1,3 +1,4 @@
 {
-    "codeQL.createQuery.qlPackLocation": "/home/errachdi/webdev/Scroller"
+    "codeQL.createQuery.qlPackLocation": "/home/errachdi/webdev/Scroller",
+    "codeQL.githubDatabase.download": "never"
 }
