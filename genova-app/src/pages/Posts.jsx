@@ -13,7 +13,7 @@ const Posts = () => {
     const token = getAccessToken(); // Retrieve the token
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/posts/',
+        'https://genova-gsaa.onrender.com/api/posts/',
         { title: postTitle, body: postBody },
         {
           headers: {
