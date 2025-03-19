@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+import os
 
 
 
@@ -121,17 +122,21 @@ WSGI_APPLICATION = 'genova.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
-    #SETTING UP MYSQL
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'YIbpSjvUuPmDnqkmNpZgblvpxvEBJYRT',
-        'HOST': 'mysql.railway.internal',
-        'PORT': '3306',
-        }
+        'NAME': os.getenv('DB_NAME', 'railway'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'YIbpSjvUuPmDnqkmNpZgblvpxvEBJYRT'),
+        'HOST': os.getenv('DB_HOST', 'ballast.proxy.rlwy.net'),  # Ensure this is correct
+        'PORT': os.getenv('DB_PORT', '20953'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
