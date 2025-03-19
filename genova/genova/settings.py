@@ -81,7 +81,7 @@ PASSWORD_HASHERS = [
 
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = ["https://genova-drab.vercel.app"]
+CORS_ALLOWED_ORIGINS = ["https://genova-drab.vercel.app"]
 
 
 MIDDLEWARE = [
