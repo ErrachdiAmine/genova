@@ -7,7 +7,7 @@ const Posts = () => {
   const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]); // State to hold the list of posts
   const [showForm, setShowForm] = useState(false); // Control form visibility
-  const BackendUrl = "https://genova-gsaa.onrender.com/api/posts/"
+  const BackendUrl = "https://genova-gsaa.onrender.com"
 
   const handleSubmit = async (e) => {
     e.preventDefault();
