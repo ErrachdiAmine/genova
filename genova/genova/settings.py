@@ -83,6 +83,8 @@ PASSWORD_HASHERS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
+    "ballast.proxy.rlwy.net:20953"
+    
 ]
 
 
