@@ -11,17 +11,15 @@ const NavBar = () => {
     }
 
 
-  
-
   return (
-    <nav className="bg-white shadow-md py-4 px-6">
+    <nav className="bg-white shadow-md py-3 px-6">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center gap-3">
           <img
-            src="youtube.png"
+            src="genova-logo.png"
             alt="logo"
-            className="w-8 h-8 object-cover rounded-full"
+            className="w-8 h-8 object-cover"
           />
           <h1 className="text-xl font-bold text-gray-800">Genova</h1>
         </div>
