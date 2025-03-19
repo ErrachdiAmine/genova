@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['scroller-github-io.vercel.app', '127.0.0.1']
+ALLOWED_HOSTS = ['genova-github-io.vercel.app', 'https://genova-gsaa.onrender.com' , '127.0.0.1']
 
 
 # Application definition
@@ -84,6 +84,7 @@ PASSWORD_HASHERS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
     "ballast.proxy.rlwy.net:20953"
+    "https://scroller-github-io.vercel.app"
     
 ]
 
