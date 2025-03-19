@@ -1,6 +1,8 @@
-Django==5.1.4
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
 mysqlclient
 gunicorn 
+asgiref==3.8.1
+Django==5.1.7
+sqlparse==0.5.3
