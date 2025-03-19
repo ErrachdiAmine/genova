@@ -7,13 +7,14 @@ const Posts = () => {
   const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]); // State to hold the list of posts
   const [showForm, setShowForm] = useState(false); // Control form visibility
+  const BackendUrl = "https://genova-gsaa.onrender.com/api/posts/"
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getAccessToken(); // Retrieve the token
     try {
       const response = await axios.post(
-        'https://genova-gsaa.onrender.com/api/posts/',
+        `${BackendUrl}/api/posts/`,
         { title: postTitle, body: postBody },
         {
           headers: {
@@ -35,7 +36,7 @@ const Posts = () => {
 
   const fetchData = async () => {
     try {
-      const postsResponse = await axios.get('http://127.0.0.1:8000/api/posts/');
+      const postsResponse = await axios.get(PostsUrl);
       const postsData = postsResponse.data;
 
       // For each post, fetch the user details and add the username to the post object.
@@ -43,7 +44,7 @@ const Posts = () => {
         postsData.map(async (post) => {
           try {
             const userResponse = await axios.get(
-              `http://127.0.0.1:8000/api/users/${post.author}/`
+              `${BackendUrl}/api/users/${post.author}/`
             );
             return { ...post, username: userResponse.data.username };
           } catch (error) {
