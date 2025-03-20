@@ -94,7 +94,7 @@ export const getCurrentUser = async () => {
     return null; // No user is logged in
   }
 
-  const response = await axios.get('http://127.0.0.1:8000/api/check_login_status/', {
+  const response = await axios.get(`${API_URL}/api/check_login_status/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
