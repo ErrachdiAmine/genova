@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
-import LoadngScreen from '../components/loading';
+import LoadngScreen from '../components/PostsLoading';
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -74,7 +74,7 @@ const Posts = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4 pt-16">
       <h1 className="text-4xl text-center text-gray-800 font-bold mb-8">
         Posts
       </h1>
@@ -130,9 +130,8 @@ const Posts = () => {
 
         {/* Display Published Posts */}
         <div className="space-y-6">
-          {loading ? (
-            <LoadngScreen />
-          ) : (
+          
+          {  loading ? <LoadngScreen /> : 
           posts.map((post) => (
             <div
               key={post.id}
@@ -147,7 +146,7 @@ const Posts = () => {
                 {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
               </p>
             </div>
-          )))}
+          ))}
         </div>
       </div>
     </div>

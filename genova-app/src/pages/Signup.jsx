@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import LoadingScreen from '../components/loading';
+import LoadingScreen from '../components/LoginSignupLoading'; // Import the LoadingScreen component
 import { useState } from 'react';
 import { registerUser } from '../auth'; // Import the registerUser function
 
@@ -51,9 +51,6 @@ const Signup = () => {
         
       } 
   }
-
-  
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, logoutUser, getCurrentUser, isTokenValid } from '../auth'; // Import all necessary functions
 import { useState, useEffect } from 'react';
-import LoadngScreen from '../components/loading';
+import LoadngScreen from '../components/LoginSignupLoading';
 
 const Login = () => {
   const [currentUser, setCurrentUser] = useState(null);
