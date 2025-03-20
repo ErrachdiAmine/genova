@@ -36,6 +36,7 @@ const Posts = () => {
     }
   };
 
+  new Date().toLocaleTimeString()
   const fetchData = async () => {
     setLoading(true); // Set loading to true before fetching
     try {
@@ -47,7 +48,7 @@ const Posts = () => {
       const postsWithUsernames = await Promise.all(
         postsData.map(async (post) => {
           try {
-            const userResponse = await axios.get(
+            const userReusponse = await axios.get(
               `${API_URL}/api/users/${post.author}/`
             );
             return { ...post, username: userResponse.data.username };
