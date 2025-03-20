@@ -54,6 +54,9 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      { loading && (
+        <LoadingScreen />
+      )}
       <div className="bg-white p-8 rounded-lg shadow-lg m-10 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Register</h2>
 
@@ -145,9 +148,7 @@ const Signup = () => {
             Register
           </button>
         </form>
-        { loading && (
-          <LoadingScreen />
-        )}
+ 
         {error && (
           <div>
             {error.username && <p>{error.username}</p>}

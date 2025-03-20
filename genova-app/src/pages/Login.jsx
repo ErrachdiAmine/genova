@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, logoutUser, getCurrentUser, isTokenValid } from '../auth'; // Import all necessary functions
 import { useState, useEffect } from 'react';
-import LoadngScreen from '../components/LoginSignupLoading';
+import LoadingScreen from '../components/LoginSignupLoading';
 
 const Login = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -14,8 +14,8 @@ const Login = () => {
 
   const login = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setLoading(true);
 
     try {
       await loginUser(username, password); // Use the loginUser function
@@ -55,6 +55,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      {loading && <LoadingScreen />}
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         {currentUser ? (
           <>
@@ -68,6 +69,7 @@ const Login = () => {
           </>
         ) : (
           <>
+
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
             <form onSubmit={login}>
               <div className="mb-4">
@@ -110,11 +112,9 @@ const Login = () => {
               </button>
             </form>
           </>
-        )}
 
-        { loading && (
-          <LoadngScreen />
-        )}
+        )} 
+
         {error && (
           <div className="text-red-500 mt-4 text-center">
             <p>{error}</p>
