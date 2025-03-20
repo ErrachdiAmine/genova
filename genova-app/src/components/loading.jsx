@@ -1,65 +1,108 @@
-import React from 'react';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
-const Loading = () => {
+const NeuralNetworkLoading = () => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const nodes = Array.from({ length: 20 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 4 + 2,
+      velocityX: Math.random() * 2 - 1,
+      velocityY: Math.random() * 2 - 1,
+    }));
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      nodes.forEach((node, index) => {
+        node.x += node.velocityX;
+        node.y += node.velocityY;
+
+        if (node.x <= 0 || node.x >= canvas.width) node.velocityX *= -1;
+        if (node.y <= 0 || node.y >= canvas.height) node.velocityY *= -1;
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 255, 255, 0.8)";
+        ctx.fill();
+        ctx.closePath();
+
+        for (let j = index + 1; j < nodes.length; j++) {
+          const distance = Math.hypot(node.x - nodes[j].x, node.y - nodes[j].y);
+          if (distance < 150) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = `rgba(0, 255, 255, ${1 - distance / 150})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.closePath();
+          }
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  }, []);
+
   return (
-    <div style={styles.container}>
-      {/* Progress Bar */}
-      <div style={styles.progressBar}>
-        <div style={styles.progressIndicator}></div>
-      </div>
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      style={styles.overlay}
+    >
+      <canvas ref={canvasRef} style={styles.canvas}></canvas>
+      <motion.h2
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+        style={styles.text}
+      >
+        Loading AI...
+      </motion.h2>
+    </motion.div>
   );
 };
 
 const styles = {
-  container: {
-    position: 'fixed', // Ensure it covers the viewport
+  overlay: {
+    position: "fixed",
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000, // Ensure it overlays other elements
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    zIndex: 1000,
   },
-  progressBar: {
-    width: '80%',
-    height: '10px',
-    background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.5))',
-    borderRadius: '50px', // Round corners for a modern feel
-    position: 'relative',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', // Subtle shadow
-    overflow: 'hidden',
+  canvas: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
   },
-  progressIndicator: {
-    width: '20%',
-    height: '100%',
-    background: 'linear-gradient(90deg, #FF0000, #FF5733)', // Gradient from red to orange
-    borderRadius: '50px',
-    animation: 'progress 2s ease-in-out infinite',
-    transition: 'width 0.5s ease-out', // Smooth transition for width
+  text: {
+    color: "cyan",
+    fontSize: "24px",
+    fontFamily: "Arial, sans-serif",
+    fontWeight: "bold",
+    zIndex: 2,
   },
 };
 
-// CSS Keyframes (You can add this in your global CSS file or use a <style> tag)
-const keyframes = `
-  @keyframes progress {
-    0% {
-      transform: translateX(-100%);
-    }
-    50% {
-      transform: translateX(50%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-`;
-
-// Inject keyframes into the document
-const styleSheet = document.styleSheets[0];
-styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
-
-export default Loading;
+export default NeuralNetworkLoading;
