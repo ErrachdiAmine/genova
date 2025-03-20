@@ -5,7 +5,7 @@ import { useState } from 'react';
 const NavBar = () => {
 
   return (
-    <nav className="bg-white shadow-md py-3 px-6">
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4 z-50 py-3 px-6 post">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center gap-3">
