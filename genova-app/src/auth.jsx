@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; // Change to named import for JWT decoding
-import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'https://genova-gsaa.onrender.com'; // Your Django API URL
 

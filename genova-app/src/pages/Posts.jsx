@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
-import NeuralNetworkLoading from '../components/loading';
+import LoadngScreen from '../components/loading';
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -131,7 +131,7 @@ const Posts = () => {
         {/* Display Published Posts */}
         <div className="space-y-6">
           {loading ? (
-            <NeuralNetworkLoading />
+            <LoadngScreen />
           ) : (
           posts.map((post) => (
             <div

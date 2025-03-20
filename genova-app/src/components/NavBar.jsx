@@ -1,16 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import Loading from './loading';
 
 const NavBar = () => {
-
-  const isLoading = localStorage.getItem('loading');
-  if (isLoading === 'true') {
-    return <Loading />;
-    }
-
-
+  
   return (
     <nav className="bg-white shadow-md py-3 px-6">
       <div className="container mx-auto flex items-center justify-between">
