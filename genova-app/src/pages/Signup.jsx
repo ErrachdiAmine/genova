@@ -26,7 +26,6 @@ const Signup = () => {
       return;  // Stop the form submission if passwords don't match
     }
 
-    // const api_endpoint = 'http://127.0.0.1:8000/api/users/'; // This line can be removed
 
     const user = {
       first_name: firstname,
@@ -57,9 +56,7 @@ const Signup = () => {
       
       <div className="bg-white p-8 rounded-lg shadow-lg m-10 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Register</h2>
-        { loading && (
-          <LoadingScreen />
-        )}
+        
         <form onSubmit={handleSubmit}>
           <div className="mb-4">  
             <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="firstname">First Name</label>
@@ -147,7 +144,9 @@ const Signup = () => {
             Register
           </button>
         </form>
- 
+        { loading && (
+          <LoadingScreen />
+        )}
         {error && (
           <div>
             {error.username && <p>{error.username}</p>}
