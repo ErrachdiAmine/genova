@@ -40,8 +40,8 @@ const Posts = () => {
     setLoading(true); // Set loading to true before fetching
     try {
       const postsResponse = await axios.get(`${API_URL}/api/posts/`);
-      setLoading(false); // Set loading to false after fetching
       const postsData = postsResponse.data;
+      setLoading(false); // Set loading to false after fetching
 
       // For each post, fetch the user details and add the username to the post object.
       const postsWithUsernames = await Promise.all(
