@@ -6,6 +6,7 @@ const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]); // State to hold the list of posts
+  const [loading, setLoading] = useState(false); // State to manage loading
   const [showForm, setShowForm] = useState(false); // Control form visibility
   const API_URL = "https://genova-gsaa.onrender.com"
 
@@ -35,8 +36,10 @@ const Posts = () => {
   };
 
   const fetchData = async () => {
+    setLoading(true); // Set loading to true before fetching
     try {
       const postsResponse = await axios.get(`${API_URL}/api/posts/`);
+      setLoading(false); // Set loading to false after fetching
       const postsData = postsResponse.data;
 
       // For each post, fetch the user details and add the username to the post object.
@@ -126,7 +129,10 @@ const Posts = () => {
 
         {/* Display Published Posts */}
         <div className="space-y-6">
-          {posts.map((post) => (
+          {loading ? (
+          <div className="loader"></div> 
+        ) : (
+          posts.map((post) => (
             <div
               key={post.id}
               className="bg-white shadow-lg rounded-lg p-6 border border-gray-200"
@@ -137,12 +143,10 @@ const Posts = () => {
               <p className="text-gray-700 mb-4">{post.body}</p>
               <p className="text-sm text-gray-500">
                 Posted by <span className="font-medium">{post.username}</span> on{' '}
-                {new Date(post.created_at).toLocaleDateString()}  {new Date(post.created_at).toLocaleTimeString()}
-                
-                
+                {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
               </p>
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>
