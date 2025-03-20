@@ -56,7 +56,6 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-      {loading && <LoadingScreen />}
         {currentUser ? (
           <>
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{currentUser}</h2>
@@ -69,7 +68,6 @@ const Login = () => {
           </>
         ) : (
           <>
-
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
             <form onSubmit={login}>
               <div className="mb-4">
@@ -114,6 +112,8 @@ const Login = () => {
           </>
 
         )} 
+        
+        {loading && <LoadingScreen />}
 
         {error && (
           <div className="text-red-500 mt-4 text-center">
