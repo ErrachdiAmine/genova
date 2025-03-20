@@ -55,8 +55,8 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      {loading && <LoadingScreen />}
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      {loading && <LoadingScreen />}
         {currentUser ? (
           <>
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{currentUser}</h2>
