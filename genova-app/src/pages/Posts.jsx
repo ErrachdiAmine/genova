@@ -7,14 +7,14 @@ const Posts = () => {
   const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]); // State to hold the list of posts
   const [showForm, setShowForm] = useState(false); // Control form visibility
-  const BackendUrl = "https://genova-gsaa.onrender.com"
+  const API_URL = "https://genova-gsaa.onrender.com"
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getAccessToken(); // Retrieve the token
     try {
       const response = await axios.post(
-        `${BackendUrl}/api/posts/`,
+        `${API_URL}/api/posts/`,
         { title: postTitle, body: postBody },
         {
           headers: {
@@ -44,7 +44,7 @@ const Posts = () => {
         postsData.map(async (post) => {
           try {
             const userResponse = await axios.get(
-              `${BackendUrl}/api/users/${post.author}/`
+              `${API_URL}/api/users/${post.author}/`
             );
             return { ...post, username: userResponse.data.username };
           } catch (error) {
