@@ -54,13 +54,12 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      { loading && (
-        <LoadingScreen />
-      )}
+      
       <div className="bg-white p-8 rounded-lg shadow-lg m-10 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Register</h2>
-
-        {/* Signup Form */}
+        { loading && (
+          <LoadingScreen />
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">  
             <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="firstname">First Name</label>
