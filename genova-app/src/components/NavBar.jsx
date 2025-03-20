@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
 const NavBar = () => {
-  
+
   return (
     <nav className="bg-white shadow-md py-3 px-6">
       <div className="container mx-auto flex items-center justify-between">
@@ -39,7 +39,11 @@ const NavBar = () => {
             to="/Login"
             className="text-gray-700 font-semibold hover:text-blue-500 transition duration-300"
           >
-            Login
+          <img 
+            src="user.png"
+            alt="profile"
+            className="w-8 h-8 object-cover"   
+          />
           </Link>
         </div>
       </div>
