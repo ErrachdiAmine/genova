@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import Loading from '../components/loading';
+import LoadingScreen from '../components/loading';
 import { useState } from 'react';
 import { registerUser } from '../auth'; // Import the registerUser function
 
@@ -12,7 +12,7 @@ const Signup = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirm_password, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState('')
   const [error, setError] = useState(null)
   
   const navigate = useNavigate();
@@ -37,7 +37,9 @@ const Signup = () => {
       }
 
     try {
+      setLoading(true)
       const response = await registerUser(firstname, lastname, email, username, password); // Use the registerUser function
+      setLoading(false)
       navigate('/Login')
       
       } catch (err) {
@@ -50,9 +52,7 @@ const Signup = () => {
       } 
   }
 
-  if (loading) {
-    return <Loading />
-  }
+  
 
 
   return (
@@ -148,6 +148,9 @@ const Signup = () => {
             Register
           </button>
         </form>
+        { loading && (
+          <LoadingScreen />
+        )}
         {error && (
           <div>
             {error.username && <p>{error.username}</p>}

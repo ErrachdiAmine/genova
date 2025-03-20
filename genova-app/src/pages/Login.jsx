@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, logoutUser, getCurrentUser, isTokenValid } from '../auth'; // Import all necessary functions
 import { useState, useEffect } from 'react';
+import LoadngScreen from '../components/loading';
 
 const Login = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -111,6 +112,9 @@ const Login = () => {
           </>
         )}
 
+        { loading && (
+          <LoadngScreen />
+        )}
         {error && (
           <div className="text-red-500 mt-4 text-center">
             <p>{error}</p>
