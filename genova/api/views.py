@@ -30,6 +30,16 @@ class UserView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request):
+        users = User.objects.all()
+        users.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def put(self, request):
+        users = User.objects.all()
+        users.update(**request.data)
+        return Response(status=status.HTTP_200_OK)
+
 class UserDetailsView(APIView):
     permission_classes = [AllowAny]  # Require authentication for this view
 
@@ -38,6 +48,14 @@ class UserDetailsView(APIView):
             user = User.objects.get(pk=pk)
             serializer = UserSerializer(user)
             return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -56,7 +74,7 @@ class UserDetailsView(APIView):
             
 
 class PostsView(APIView):
-    permission_classes = [AllowAny]  # Require authentication for this view
+    permission_classes = [IsAuthenticated]  # Require authentication for this view
     authentication_classes = [JWTAuthentication]  # Add TokenAuthentication for authorization
     def get(self, request):
         posts = Post.objects.all()
@@ -74,3 +92,8 @@ class PostsView(APIView):
         posts = Post.objects.all()
         posts.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def put(self, request):
+        posts = Post.objects.all()
+        posts.update(**request.data)
+        return Response(status=status.HTTP_200_OK)

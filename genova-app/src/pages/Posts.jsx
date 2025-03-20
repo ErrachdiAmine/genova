@@ -36,7 +36,6 @@ const Posts = () => {
     }
   };
 
-  new Date().toLocaleTimeString()
   const fetchData = async () => {
     setLoading(true); // Set loading to true before fetching
     try {
