@@ -36,7 +36,7 @@ const Posts = () => {
 
   const fetchData = async () => {
     try {
-      const postsResponse = await axios.get(PostsUrl);
+      const postsResponse = await axios.get(`${API_URL}/api/posts/`);
       const postsData = postsResponse.data;
 
       // For each post, fetch the user details and add the username to the post object.
