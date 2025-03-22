@@ -50,10 +50,7 @@ const Posts = () => {
     const token = getAccessToken(); // Retrieve the token
     try {
       const postsResponse = await axios.get(
-        `${API_URL}/api/posts/`,
-        { headers : {
-            Authorization : `Bearer ${getAccessToken()}`
-        }}
+        `${API_URL}/api/posts/`
         
       );
       const postsData = postsResponse.data;
