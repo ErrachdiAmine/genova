@@ -47,8 +47,16 @@ const Posts = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    const token = getAccessToken(); // Retrieve the token
     try {
-      const postsResponse = await axios.get(`${API_URL}/api/posts/`);
+      const postsResponse = await axios.get(
+        `${API_URL}/api/posts/`,
+        { headers : {
+            Authorization : `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+        
+      );
       const postsData = postsResponse.data;
       setLoading(false);
       const postsWithUsernames = await Promise.all(
