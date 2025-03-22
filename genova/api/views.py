@@ -16,7 +16,7 @@ class IsAuthenticatedForWriteMethods(permissions.BasePermission):
 
     def has_permission(self, request, view):
         # Allow GET method for all users (authenticated or not)
-        if request.method == 'get':
+        if request.method == 'GET':
             return True
         
         # Only allow POST, PUT, DELETE methods if the user is authenticated
@@ -67,6 +67,7 @@ class UserView(APIView):
 
 class PostsView(APIView):
     permission_classes = [IsAuthenticatedForWriteMethods]  # Require authentication for this view
+    authentication_classes = [JWTAuthentication]  # Use JWT authentication
 
     def get(self, request):
         posts = Post.objects.all()
