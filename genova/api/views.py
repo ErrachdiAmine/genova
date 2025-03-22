@@ -65,13 +65,13 @@ class UserView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class PostsView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Require authentication for this view
-    authentication_classes = [JWTAuthentication]  # Use JWT authentication
 
-    
+class PostsView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [JWTAuthentication]
+
     def get_authenticators(self):
-        # Bypass authentication for safe methods (like GET)
+        # If the request method is safe (GET, HEAD, OPTIONS), bypass authentication.
         if self.request.method in permissions.SAFE_METHODS:
             return []
         return super().get_authenticators()
