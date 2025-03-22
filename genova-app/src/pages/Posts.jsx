@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
 import LoadingScreen from '../components/PostsLoading';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
