@@ -51,8 +51,11 @@ const Posts = () => {
     try {
       const postsResponse = await axios.get(
         `${API_URL}/api/posts/`,
+        { headers : {
+            Authorization : `Bearer ${getAccessToken()}`
+        }}
+        
       );
-      
       const postsData = postsResponse.data;
       setLoading(false);
       const postsWithUsernames = await Promise.all(
