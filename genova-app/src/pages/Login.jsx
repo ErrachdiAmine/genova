@@ -11,6 +11,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  
+  const isDarkMode = localStorage.getItem('theme') === 'dark';
+  {isDarkMode ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark') }
 
   const login = async (e) => {
     e.preventDefault();
@@ -47,31 +50,31 @@ const Login = () => {
   const logout = () => {
     logoutUser(); // Use the logoutUser function
     setCurrentUser(null);
-  }
+  };
 
   const validToken = isTokenValid(); // Use the isTokenValid function
 
   console.log(validToken);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 pt-16">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
         {currentUser ? (
           <>
-            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{currentUser}</h2>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-6">{currentUser}</h2>
             <button
               onClick={logout}
-              className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
+              className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 dark:hover:bg-red-500 transition duration-300"
             >
               Logout
             </button>
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Login</h2>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-6">Login</h2>
             <form onSubmit={login}>
               <div className="mb-4">
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Username
                 </label>
                 <input
@@ -80,14 +83,14 @@ const Login = () => {
                   name="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="Enter your username"
                   required
                 />
               </div>
 
               <div className="mb-6">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Password
                 </label>
                 <input
@@ -96,7 +99,7 @@ const Login = () => {
                   name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="Enter your password"
                   required
                 />
@@ -104,15 +107,14 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+                className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 transition duration-300"
               >
                 Login
               </button>
             </form>
           </>
+        )}
 
-        )} 
-        
         {loading && <LoadingScreen />}
 
         {error && (
@@ -123,8 +125,8 @@ const Login = () => {
 
         {!currentUser && (
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">Don't have an account?</p>
-            <Link to="/Register" className="text-blue-500 hover:text-blue-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Don't have an account?</p>
+            <Link to="/Register" className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
               Sign up
             </Link>
           </div>

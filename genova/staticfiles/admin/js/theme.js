@@ -1,11 +1,13 @@
 'use strict';
 {
     function setTheme(mode) {
+        // Ensure dark mode styles are applied
+        document.documentElement.classList.toggle('dark', mode === 'dark');
         if (mode !== "light" && mode !== "dark" && mode !== "auto") {
             console.error(`Got invalid theme mode: ${mode}. Resetting to auto.`);
             mode = "auto";
         }
-        document.documentElement.dataset.theme = mode;
+        document.documentElement.dataset.theme = mode; // Set the theme mode
         localStorage.setItem("theme", mode);
     }
 

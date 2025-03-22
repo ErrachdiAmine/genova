@@ -57,7 +57,7 @@ class UserDetailsView(APIView):
             user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)                 
 
     
     def put(self, request, pk):
