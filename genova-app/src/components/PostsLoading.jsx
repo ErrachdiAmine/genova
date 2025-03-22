@@ -13,7 +13,7 @@ const LoadingScreen = () => {
   }, [isDarkMode]);
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center">
       <div className="space-y-6 w-full max-w-2xl">
         {Array.from({ length: 4 }).map((_, index) => (
           <motion.div
