@@ -35,7 +35,7 @@ const Posts = () => {
         { title: postTitle, body: postBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert.success('Post published!');
+      alert('Post published!');
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
