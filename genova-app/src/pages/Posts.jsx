@@ -26,7 +26,7 @@ const Posts = () => {
     e.preventDefault();
     const token = getAccessToken();
     if (!token) {
-      alert.error('You must be logged in to create a post.');
+      alert('You must be logged in to create a post.');
       return;
     }
     try {
@@ -41,7 +41,7 @@ const Posts = () => {
       setShowForm(false);
       fetchData();
     } catch (error) {
-      alert.error('Failed to publish post. Please try again.');
+      alert('Failed to publish post. Please try again.');
       console.error('Error publishing post:', error);
     }
   };
@@ -58,7 +58,7 @@ const Posts = () => {
       setPosts(sortedPosts);
       setLoading(false);
     } catch (error) {
-      alert.error('Failed to load posts.');
+      alert('Failed to load posts.');
       console.error('Error fetching posts:', error);
     }
   };
