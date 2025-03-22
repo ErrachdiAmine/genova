@@ -86,6 +86,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://genova-app.vercel.app",
     "https://genova-gsaa.onrender.com",
+    "https://genova-drab.vercel.app"
 ]
 
 
