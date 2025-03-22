@@ -69,6 +69,13 @@ class PostsView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]  # Require authentication for this view
     authentication_classes = [JWTAuthentication]  # Use JWT authentication
 
+    
+    def get_authenticators(self):
+        # Bypass authentication for safe methods (like GET)
+        if self.request.method in permissions.SAFE_METHODS:
+            return []
+        return super().get_authenticators()
+
     def get(self, request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
