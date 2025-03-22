@@ -67,7 +67,6 @@ class UserView(APIView):
 
 class PostsView(APIView):
     permission_classes = [IsAuthenticatedForWriteMethods]  # Require authentication for this view
-    authentication_classes = [JWTAuthentication]  # Add TokenAuthentication for authorization
 
     def get(self, request):
         posts = Post.objects.all()
