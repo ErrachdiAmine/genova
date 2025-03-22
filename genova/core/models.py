@@ -19,8 +19,6 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'username'
 
-
-
     groups = models.ManyToManyField(
         'auth.Group', 
         related_name='core_user_set',  # custom reverse accessor for groups
