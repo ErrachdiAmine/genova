@@ -52,9 +52,8 @@ const Posts = () => {
       const postsResponse = await axios.get(
         `${API_URL}/api/posts/`,
         { headers : {
-            Authorization : `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        }
+            Authorization : `Bearer ${getAccessToken()}`
+        }}
         
       );
       const postsData = postsResponse.data;
