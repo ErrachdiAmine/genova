@@ -23,70 +23,53 @@ const Posts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = getAccessToken(); // Retrieve the token
+    const token = getAccessToken();
+    if (!token) {
+      toast.error('You must be logged in to create a post.');
+      return;
+    }
     try {
       const response = await axios.post(
         `${API_URL}/api/posts/`,
         { title: postTitle, body: postBody },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log('Post published:', response.data);
+      toast.success('Post published!');
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
-      fetchData(); // Fetch the updated list of posts
+      fetchData();
     } catch (error) {
+      toast.error('Failed to publish post. Please try again.');
       console.error('Error publishing post:', error);
     }
   };
 
   const fetchData = async () => {
     setLoading(true);
-    const token = getAccessToken(); // Retrieve the token
     try {
-      const postsResponse = await axios.get(
-        `${API_URL}/api/posts/`
-        
-      );
+      const postsResponse = await axios.get(`${API_URL}/api/posts/`);
       const postsData = postsResponse.data;
-      setLoading(false);
-      const postsWithUsernames = await Promise.all(
-        postsData.map(async (post) => {
-          try {
-            const userResponse = await axios.get(
-              `${API_URL}/api/users/${post.author}/`
-            );
-            return { ...post, username: userResponse.data.username };
-          } catch (error) {
-            console.error(`Error fetching user for post ${post.id}:`, error);
-            return { ...post, username: post.author };
-          }
-        })
-      );
-      const sortedPosts = postsWithUsernames.sort(
+      // Assume backend now includes author details in the post data
+      const sortedPosts = postsData.sort(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
       );
       setPosts(sortedPosts);
+      setLoading(false);
     } catch (error) {
+      toast.error('Failed to load posts.');
       console.error('Error fetching posts:', error);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
       <h1 className="text-4xl text-center font-bold mb-8">Posts</h1>
 
       <div className="w-full max-w-3xl space-y-8">
-        {!showForm && (
+        {!showForm && getAccessToken() && (
           <button
             onClick={() => setShowForm(true)}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200"
