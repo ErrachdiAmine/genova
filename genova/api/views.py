@@ -68,7 +68,6 @@ class UserView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class PostsView(APIView):
-    authentication_classes = [JWTAuthentication]  # Always process JWT
     permission_classes = [AllowAny]  # GET=open, others=auth
 
     # --- GET: List all posts (open to all) ---
