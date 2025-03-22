@@ -7,9 +7,6 @@ from rest_framework.permissions import AllowAny
 from core.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 
-# ==================================================================
-# Permission Classes
-# ==================================================================
 class UserAccessPermission(permissions.BasePermission):
     """Allow unauthenticated POST (for registration) and GET, require auth for other methods."""
     def has_permission(self, request, view):
@@ -17,9 +14,7 @@ class UserAccessPermission(permissions.BasePermission):
             return True  # Allow GET and POST for all
         return request.user and request.user.is_authenticated  # Require auth for PUT/DELETE
 
-# ==================================================================
-# Views
-# ==================================================================
+
 @api_view(['GET'])
 def check_login_status(request):
     """Endpoint to check if the user is logged in (works consistently across views)."""

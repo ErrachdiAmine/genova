@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserView, UserDetailsView, PostsView, check_login_status
+from .views import UserView, PostsView, check_login_status
 
 
 
