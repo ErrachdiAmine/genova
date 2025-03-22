@@ -23,7 +23,6 @@ class IsAuthenticatedForWriteMethods(permissions.BasePermission):
         return request.user and request.user.is_authenticated
 
 
-@api_view(['GET'])
 def check_login_status(request):
     if request.user.is_authenticated:
         return Response({'is_logged_in': True, 'username': request.user.username})
