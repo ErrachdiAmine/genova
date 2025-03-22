@@ -6,19 +6,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 
-# ==================================================================
-# Permission Classes
-# ==================================================================
 class UserAccessPermission(permissions.BasePermission):
-    """Allow unauthenticated POST (for registration) and GET, require auth for other methods."""
     def has_permission(self, request, view):
         if request.method in ['GET', 'POST']:
             return True  # Allow GET and POST for all
         return request.user and request.user.is_authenticated  # Require auth for PUT/DELETE
 
-# ==================================================================
-# Views
-# ==================================================================
 @api_view(['GET'])
 def check_login_status(request):
     """Endpoint to check if the user is logged in (works consistently across views)."""
@@ -80,7 +73,7 @@ class PostsView(APIView):
     def post(self, request):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(author=request.user)  # Associate post with authenticated user
+            serializer.save(author=request.user.username)  # Associate post with authenticated user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
