@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
 import LoadingScreen from '../components/PostsLoading';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -27,7 +26,7 @@ const Posts = () => {
     e.preventDefault();
     const token = getAccessToken();
     if (!token) {
-      toast.error('You must be logged in to create a post.');
+      alert.error('You must be logged in to create a post.');
       return;
     }
     try {
@@ -36,13 +35,13 @@ const Posts = () => {
         { title: postTitle, body: postBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success('Post published!');
+      alert.success('Post published!');
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
       fetchData();
     } catch (error) {
-      toast.error('Failed to publish post. Please try again.');
+      alert.error('Failed to publish post. Please try again.');
       console.error('Error publishing post:', error);
     }
   };
@@ -59,7 +58,7 @@ const Posts = () => {
       setPosts(sortedPosts);
       setLoading(false);
     } catch (error) {
-      toast.error('Failed to load posts.');
+      alert.error('Failed to load posts.');
       console.error('Error fetching posts:', error);
     }
   };
