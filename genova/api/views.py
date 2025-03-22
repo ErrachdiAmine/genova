@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import AllowAny
 from core.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 
@@ -68,7 +69,7 @@ class UserView(APIView):
 
 class PostsView(APIView):
     authentication_classes = [JWTAuthentication]  # Always process JWT
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # GET=open, others=auth
+    permission_classes = [AllowAny]  # GET=open, others=auth
 
     # --- GET: List all posts (open to all) ---
     def get(self, request):
