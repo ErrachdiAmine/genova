@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
-import LoadngScreen from '../components/PostsLoading';
+import LoadingScreen from '../components/PostsLoading';
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -127,7 +127,7 @@ const Posts = () => {
         )}
 
         <div className="space-y-6">
-          {loading ? <LoadngScreen /> :
+          {loading ? <LoadingScreen /> :
             posts.map((post) => (
               <div
                 key={post.id}
