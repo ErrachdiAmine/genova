@@ -23,6 +23,7 @@ class IsAuthenticatedForWriteMethods(permissions.BasePermission):
         return request.user and request.user.is_authenticated
 
 
+@api_view(['GET'])
 def check_login_status(request):
     if request.user.is_authenticated:
         return Response({'is_logged_in': True, 'username': request.user.username})
@@ -65,7 +66,7 @@ class UserView(APIView):
 
 
 class PostsView(APIView):
-    permission_classes = [IsAuthenticatedForWriteMethods]  # Require authentication for this view
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Require authentication for this view
     authentication_classes = [JWTAuthentication]  # Use JWT authentication
 
     def get(self, request):
