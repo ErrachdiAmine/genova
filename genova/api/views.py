@@ -6,11 +6,18 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 
-class UserAccessPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if request.method in ['GET', 'POST']:
-            return True  # Allow GET and POST for all
-        return request.user and request.user.is_authenticated  # Require auth for PUT/DELETE
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj == request.user
+
+class IsPostAuthorOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.author == request.user
 
 @api_view(['GET'])
 def check_login_status(request):
@@ -22,7 +29,7 @@ def check_login_status(request):
 
 class UserView(APIView):
     authentication_classes = [JWTAuthentication]  # Always process JWT
-    permission_classes = [UserAccessPermission]   # Custom permission for User access
+    permission_classes = [IsOwnerOrReadOnly]   # Custom permission for User access
 
     # --- GET: List all users (open to all) ---
     def get(self, request):
@@ -61,7 +68,7 @@ class UserView(APIView):
 
 class PostsView(APIView):
     authentication_classes = [JWTAuthentication]  # Always process JWT
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # GET=open, others=auth
+    permission_classes = [IsPostAuthorOrReadOnly]  # GET=open, others=auth
 
     # --- GET: List all posts (open to all) ---
     def get(self, request):
