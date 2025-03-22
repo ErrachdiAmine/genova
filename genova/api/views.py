@@ -3,10 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import AllowAny
 from core.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 
+# ==================================================================
+# Permission Classes
+# ==================================================================
 class UserAccessPermission(permissions.BasePermission):
     """Allow unauthenticated POST (for registration) and GET, require auth for other methods."""
     def has_permission(self, request, view):
@@ -14,7 +16,9 @@ class UserAccessPermission(permissions.BasePermission):
             return True  # Allow GET and POST for all
         return request.user and request.user.is_authenticated  # Require auth for PUT/DELETE
 
-
+# ==================================================================
+# Views
+# ==================================================================
 @api_view(['GET'])
 def check_login_status(request):
     """Endpoint to check if the user is logged in (works consistently across views)."""
@@ -63,7 +67,8 @@ class UserView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class PostsView(APIView):
-    permission_classes = [AllowAny]  # GET=open, others=auth
+    authentication_classes = [JWTAuthentication]  # Always process JWT
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # GET=open, others=auth
 
     # --- GET: List all posts (open to all) ---
     def get(self, request):
@@ -75,7 +80,7 @@ class PostsView(APIView):
     def post(self, request):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(author=request.user.username)  # Associate post with authenticated user
+            serializer.save(author=request.user)  # Associate post with authenticated user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
