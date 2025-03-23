@@ -4,6 +4,19 @@ import axios from 'axios';
 import LoadingScreen from '../components/PostsLoading';
 import { FaEllipsisV } from 'react-icons/fa';
 
+// Helper function to get current user from JWT
+const getCurrentUser = () => {
+  const token = getAccessToken();
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.username;
+  } catch (e) {
+    console.error('Error decoding token:', e);
+    return null;
+  }
+};
+
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
@@ -14,7 +27,6 @@ const Posts = () => {
   const [editingPost, setEditingPost] = useState(null);
   const API_URL = "https://genova-gsaa.onrender.com";
 
-  // Fetch posts on component mount
   useEffect(() => {
     fetchData();
   }, []);
@@ -53,17 +65,14 @@ const Posts = () => {
 
   const handleDeletePost = async (postId) => {
     const token = getAccessToken();
-    if (!token) {
-      alert('You must be logged in to delete a post.');
-      return;
-    }
+    if (!token) return;
 
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
         await axios.delete(`${API_URL}/api/posts/${postId}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        fetchData(); // Refresh posts list
+        fetchData();
         alert('Post deleted successfully!');
       } catch (error) {
         console.error('Error deleting post:', error);
@@ -98,7 +107,6 @@ const Posts = () => {
         alert('Post created successfully!');
       }
       
-      // Reset form and refresh data
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
@@ -169,55 +177,56 @@ const Posts = () => {
 
         <div className="space-y-6">
           {loading ? <LoadingScreen /> :
-            posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative"
-              >
-                <div className="absolute top-4 right-4">
-                  <button
-                    onClick={() => toggleDropdown(post.id)}
-                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
-                  >
-                    <FaEllipsisV className="text-gray-600 dark:text-gray-400" />
-                  </button>
-                  {showDropdown === post.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
+            posts.map((post) => {
+              const isAuthor = getCurrentUser() === post.author_details.username;
+              return (
+                <div
+                  key={post.id}
+                  className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative"
+                >
+                  {(isAuthor || getAccessToken()) && (
+                    <div className="absolute top-4 right-4">
                       <button
-                        className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                        onClick={() => toggleDropdown(post.id)}
+                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
                       >
-                        View
+                        <FaEllipsisV className="text-gray-600 dark:text-gray-400" />
                       </button>
-                      {getAccessToken() && (
-                      <>
-                        <button
-                          onClick={() => handlePostEdit(post.id)}
-                          className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeletePost(post.id)}
-                          className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        >
-                          Delete
-                        </button>
-                      
-                      </>
+                      {showDropdown === post.id && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
+                          <button className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'>
+                            View
+                          </button>
+                          {isAuthor && (
+                            <>
+                              <button
+                                onClick={() => handlePostEdit(post.id)}
+                                className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeletePost(post.id)}
+                                className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              >
+                                Delete
+                              </button>
+                            </>
+                          )}
+                        </div>
                       )}
-                      
                     </div>
                   )}
-                </div>
 
-                <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Posted by <span className="font-medium text-gray-900 dark:text-white">{post.author_details.username}</span> on{' '}
-                  {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
-                </p>
-              </div>
-            ))}
+                  <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
+                  <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Posted by <span className="font-medium text-gray-900 dark:text-white">{post.author_details.username}</span> on{' '}
+                    {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
+                  </p>
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
