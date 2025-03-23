@@ -1,26 +1,28 @@
-import { useEffect } from "react";
+import { useState,useEffect } from "react";
 
 
 
 const ManagePosts = () => {
 
     const [posts, setPosts] = useState([]);
-    const [currentUser , setCurrentUser] = useState(null);
 
     
-    const fetshCurrentUser = async () => {
-        try {
-            const response = await axios.get('https://genova-gsaa.onrender.com/api/check_login_status/');
-            setCurrentUser(response.data);
-        } catch (error) {
-            console.error('Error fetching current user:', error);
-        }
-    }
+    const getCurrentUser = () => {
+      const token = getAccessToken();
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id;
+      } catch (e) {
+        console.error('Error decoding token:', e);
+        return null;
+      }
+    };
 
     const fetshData = async () => {
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/');
-            const userPosts = posts.filter(post => post.id === currentUser.id);
+            const userPosts = posts.filter(post => post.id === getCurrentUser());
             setPosts(userPosts);
         } catch (error) {
             console.error('Error fetching posts:', error);
@@ -28,7 +30,6 @@ const ManagePosts = () => {
     };
 
     useEffect(() => {
-        fetshCurrentUser(),
         fetshData()
     }
     , []);
