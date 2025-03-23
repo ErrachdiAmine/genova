@@ -51,8 +51,8 @@ const Login = () => {
   }, []);
 
   const logout = () => {
-    setIsLoadingUser(false);
     logoutUser(); // Use the logoutUser function
+    setIsLoadingUser(false);
     setCurrentUser(null);
   };
 
