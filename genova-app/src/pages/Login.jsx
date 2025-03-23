@@ -52,8 +52,9 @@ const Login = () => {
 
   const logout = () => {
     logoutUser(); // Use the logoutUser function
-    setIsLoadingUser(false);
     setCurrentUser(null);
+    setIsLoadingUser(false);
+
   };
 
   const validToken = isTokenValid(); // Use the isTokenValid function
