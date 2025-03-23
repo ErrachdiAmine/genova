@@ -11,21 +11,66 @@ const Posts = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const [editingPost, setEditingPost] = useState(null); // Track the post being edited
+  const [editingPost, setEditingPost] = useState(null);
   const API_URL = "https://genova-gsaa.onrender.com";
 
-  // ...
+  // Fetch posts on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const postsResponse = await axios.get(`${API_URL}/api/posts/`);
+      const postsData = postsResponse.data;
+      const sortedPosts = postsData.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setPosts(sortedPosts);
+      setLoading(false);
+    } catch (error) {
+      alert('Failed to load posts.');
+      console.error('Error fetching posts:', error);
+      setLoading(false);
+    }
+  };
+
+  const toggleDropdown = (postId) => {
+    setShowDropdown(showDropdown === postId ? null : postId);
+  };
 
   const handlePostEdit = (postId) => {
-    setShowDropdown(null);
-    // Find the post to edit
     const post = posts.find((post) => post.id === postId);
     if (post) {
       setPostTitle(post.title);
       setPostBody(post.body);
-      setEditingPost(post); // Store the post being edited
+      setEditingPost(post);
       setShowForm(true);
     }
+    setShowDropdown(null);
+  };
+
+  const handleDeletePost = async (postId) => {
+    const token = getAccessToken();
+    if (!token) {
+      alert('You must be logged in to delete a post.');
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      try {
+        await axios.delete(`${API_URL}/api/posts/${postId}/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchData(); // Refresh posts list
+        alert('Post deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        alert('Failed to delete post.');
+      }
+    }
+    setShowDropdown(null);
   };
 
   const handleSubmit = async (e) => {
@@ -38,30 +83,31 @@ const Posts = () => {
 
     try {
       if (editingPost) {
-        // Update existing post
         await axios.put(
           `${API_URL}/api/posts/${editingPost.id}/`,
           { title: postTitle, body: postBody },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        alert('Post updated!');
+        alert('Post updated successfully!');
       } else {
-        // Create new post
         await axios.post(
           `${API_URL}/api/posts/`,
           { title: postTitle, body: postBody },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        alert('Post published!');
+        alert('Post created successfully!');
       }
+      
+      // Reset form and refresh data
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
       setEditingPost(null);
-      fetchData(); // Refresh the list
+      await fetchData();
+      
     } catch (error) {
-      alert('Failed to save post.');
       console.error('Error saving post:', error);
+      alert(`Error: ${error.response?.data?.message || 'Failed to save post'}`);
     }
   };
 
@@ -90,6 +136,7 @@ const Posts = () => {
               onChange={(e) => setPostTitle(e.target.value)}
               className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Title"
+              required
             />
             <textarea
               className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -97,17 +144,21 @@ const Posts = () => {
               value={postBody}
               onChange={(e) => setPostBody(e.target.value)}
               rows="4"
+              required
             />
             <div className="flex justify-between">
               <button
                 type="submit"
                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
               >
-                Post
+                {editingPost ? 'Update Post' : 'Create Post'}
               </button>
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingPost(null);
+                }}
                 className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
               >
                 Cancel
@@ -123,7 +174,6 @@ const Posts = () => {
                 key={post.id}
                 className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative"
               >
-                {/* Three-dots menu */}
                 <div className="absolute top-4 right-4">
                   <button
                     onClick={() => toggleDropdown(post.id)}
@@ -137,14 +187,10 @@ const Posts = () => {
                         onClick={() => handlePostEdit(post.id)}
                         className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                       >
-                        Edit Post
+                        Edit
                       </button>
                       <button
-                        onClick={() => {
-                          // Handle Delete
-                          console.log('Delete post:', post.id);
-                          setShowDropdown(false);
-                        }}
+                        onClick={() => handleDeletePost(post.id)}
                         className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600"
                       >
                         Delete
