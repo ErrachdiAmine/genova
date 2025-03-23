@@ -11,6 +11,7 @@ const Posts = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null); // Track which post's dropdown is open
+  const [editingPost, setEditingPost] = useState(null);
   const API_URL = "https://genova-gsaa.onrender.com";
 
   // Fetch posts on component mount
@@ -37,6 +38,31 @@ const Posts = () => {
   const toggleDropdown = (postId) => {
     setShowDropdown(showDropdown === postId ? null : postId);
   };
+
+  const handlePostEdit = async (postId) => {
+    setShowDropdown(false);
+    setEditingPost(true);
+    console.log('Editing post:', post.id);
+
+    const post = posts.find((post) => post.id === postId);
+    setPostTitle(post.title);
+    setPostBody(post.body);
+    setShowForm(true);
+
+    // Update the post
+    try {
+      const response = await axios.put(`${API_URL}/api/posts/${postId}/`, {
+        title: postTitle,
+        body: postBody,
+      });
+      console.log('Post updated:', response.data);
+      setShowForm(false);
+      setEditingPost(false);
+      fetchData();
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
@@ -105,11 +131,7 @@ const Posts = () => {
                   {showDropdown === post.id && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
                       <button
-                        onClick={() => {
-                          // Handle Edit
-                          console.log('Edit post:', post.id);
-                          setShowDropdown(false);
-                        }}
+                        onClick= {handlePostEdit}
                         className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                       >
                         Edit
