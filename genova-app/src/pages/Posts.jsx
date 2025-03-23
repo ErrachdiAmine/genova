@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
 import LoadingScreen from '../components/PostsLoading';
-import { FaEllipsisV } from 'react-icons/fa'; // Import the three-dots icon
+import { FaEllipsisV } from 'react-icons/fa';
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -10,66 +10,58 @@ const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(null); // Track which post's dropdown is open
-  const [editingPost, setEditingPost] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(null);
+  const [editingPost, setEditingPost] = useState(null); // Track the post being edited
   const API_URL = "https://genova-gsaa.onrender.com";
 
-  // Fetch posts on component mount
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // ...
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const postsResponse = await axios.get(`${API_URL}/api/posts/`);
-      const postsData = postsResponse.data;
-      const sortedPosts = postsData.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at)
-      );
-      setPosts(sortedPosts);
-      setLoading(false);
-    } catch (error) {
-      alert('Failed to load posts.');
-      console.error('Error fetching posts:', error);
-    }
-  };
-
-  const toggleDropdown = (postId) => {
-    setShowDropdown(showDropdown === postId ? null : postId);
-  };
-
-  const handlePostEdit = async (postId) => {
+  const handlePostEdit = (postId) => {
     setShowDropdown(null);
-    setEditingPost(true);
-
     // Find the post to edit
     const post = posts.find((post) => post.id === postId);
     if (post) {
       setPostTitle(post.title);
       setPostBody(post.body);
+      setEditingPost(post); // Store the post being edited
       setShowForm(true);
     }
+  };
 
-    // Update the post
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = getAccessToken();
+    if (!token) {
+      alert('You must be logged in to perform this action.');
+      return;
+    }
+
     try {
-      const token = getAccessToken();
-      if (!token) {
-        alert('You must be logged in to edit a post.');
-        return;
+      if (editingPost) {
+        // Update existing post
+        await axios.put(
+          `${API_URL}/api/posts/${editingPost.id}/`,
+          { title: postTitle, body: postBody },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert('Post updated!');
+      } else {
+        // Create new post
+        await axios.post(
+          `${API_URL}/api/posts/`,
+          { title: postTitle, body: postBody },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        alert('Post published!');
       }
-
-      const response = await axios.put(
-        `${API_URL}/api/posts/${postId}/`,
-        { title: postTitle, body: postBody },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      console.log('Post updated:', response.data);
+      setPostTitle('');
+      setPostBody('');
       setShowForm(false);
-      setEditingPost(false);
-      fetchData(); // Refresh the posts list
+      setEditingPost(null);
+      fetchData(); // Refresh the list
     } catch (error) {
-      console.error('Error updating post:', error);
+      alert('Failed to save post.');
+      console.error('Error saving post:', error);
     }
   };
 
@@ -88,8 +80,10 @@ const Posts = () => {
         )}
 
         {showForm && (
-          <form onSubmit={(e) => e.preventDefault()} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-            <h2 className="text-2xl font-semibold mb-4">Create a Post</h2>
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+            <h2 className="text-2xl font-semibold mb-4">
+              {editingPost ? 'Edit Post' : 'Create a Post'}
+            </h2>
             <input
               type="text"
               value={postTitle}
