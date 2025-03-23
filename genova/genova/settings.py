@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["genova-gsaa.onrender.com", "genova-drab.vercel.app", "genova-errachdi.vercel.app", "genova-git-main-errachdi.vercel.app"]
+ALLOWED_HOSTS = ["genova-gsaa.onrender.com", "genova-drab.vercel.app", "genova-errachdi.vercel.app"]
 
 
 # Application definition
@@ -87,7 +87,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://genova-gsaa.onrender.com",
     "https://genova-drab.vercel.app"
     "https://genova-errachdi.vercel.app"
-    "https://genova-git-main-errachdi.vercel.app"
+    
     
 ]
 

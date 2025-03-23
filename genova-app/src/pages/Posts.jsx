@@ -42,7 +42,6 @@ const Posts = () => {
   const handlePostEdit = async (postId) => {
     setShowDropdown(false);
     setEditingPost(true);
-    console.log('Editing post:', post.id);
 
     const post = posts.find((post) => post.id === postId);
     setPostTitle(post.title);
