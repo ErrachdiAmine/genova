@@ -30,7 +30,15 @@ SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["genova-gsaa.onrender.com", "genova-drab.vercel.app", "genova-errachdi.vercel.app", "genova-errachdi-omega.vercel.app"]
+ALLOWED_HOSTS = ['*']
+#CORS_ALLOWED_ORIGINS = [
+ #   "http://localhost:3000",
+  #  "https://genova-gsaa.onrender.com",
+   # "https://genova-drab.vercel.app"
+    #"https://genova-errachdi.vercel.app"
+    #"https://genova-errachdi-omega.vercel.app"
+
+#]
 
 
 # Application definition
@@ -82,15 +90,17 @@ PASSWORD_HASHERS = [
 
 # CORS settings
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://genova-gsaa.onrender.com",
-    "https://genova-drab.vercel.app"
-    "https://genova-errachdi.vercel.app"
-    "https://genova-errachdi-omega.vercel.app"
+#CORS_ALLOWED_ORIGINS = [
+ #   "http://localhost:3000",
+  #  "https://genova-gsaa.onrender.com",
+   # "https://genova-drab.vercel.app"
+    #"https://genova-errachdi.vercel.app"
+    #"https://genova-errachdi-omega.vercel.app"
     
     
-]
+#]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 MIDDLEWARE = [

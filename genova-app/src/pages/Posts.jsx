@@ -80,7 +80,7 @@ const Posts = () => {
         )}
 
         {showForm && (
-          <form onSubmit={handleSubmitc} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">
               {editingPost ? 'Edit Post' : 'Create a Post'}
             </h2>
