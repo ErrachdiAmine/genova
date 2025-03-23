@@ -2,7 +2,7 @@ from django.urls import path
 from .views import UserView, PostsView, check_login_status
 
 
-
+app_name = 'api'
 
 urlpatterns = [
   path('users/', UserView.as_view(), name='users'),
@@ -10,5 +10,4 @@ urlpatterns = [
   path('posts/', PostsView.as_view(), name='posts'),
   path('posts/<int:pk>/', PostsView.as_view(), name='post-detail'),
   path('check_login_status/', check_login_status, name='check_login_status'),
-  
 ]
