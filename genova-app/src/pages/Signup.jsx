@@ -34,7 +34,6 @@ const Signup = () => {
       setLoading(true);
       await registerUser(firstname, lastname, email, username, password);
       setLoading(false);
-      alert('Registration successful! Please log in.');
       navigate('/Login');
     } catch (err) {
       setLoading(false);
