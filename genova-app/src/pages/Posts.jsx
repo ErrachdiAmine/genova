@@ -42,7 +42,7 @@ const Posts = () => {
   const handlePostEdit = async (postId) => {
     setShowDropdown(null);
     setEditingPost(true);
-  
+
     // Find the post to edit
     const post = posts.find((post) => post.id === postId);
     if (post) {
@@ -50,7 +50,7 @@ const Posts = () => {
       setPostBody(post.body);
       setShowForm(true);
     }
-  
+
     // Update the post
     try {
       const token = getAccessToken();
@@ -58,7 +58,7 @@ const Posts = () => {
         alert('You must be logged in to edit a post.');
         return;
       }
-  
+
       const response = await axios.put(
         `${API_URL}/api/posts/${postId}/`,
         { title: postTitle, body: postBody },
@@ -72,7 +72,6 @@ const Posts = () => {
       console.error('Error updating post:', error);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
@@ -141,7 +140,7 @@ const Posts = () => {
                   {showDropdown === post.id && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
                       <button
-                        onClick= {() => {handlePostEdit(post.id)}}
+                        onClick={() => handlePostEdit(post.id)}
                         className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                       >
                         Edit Post
