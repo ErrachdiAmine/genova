@@ -23,7 +23,7 @@ const Login = () => {
 
     try {
       await loginUser(username, password); // Use the loginUser function
-      navigate('/');
+      navigate('/Posts');
     } catch (err) {
       setLoading(false);
       if (err.response && err.response.status === 401) {
