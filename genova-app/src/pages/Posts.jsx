@@ -124,7 +124,7 @@ const Posts = () => {
                 <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
                 <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Posted by <span className="font-medium text-gray-900 dark:text-white">{post.username}</span> on{' '}
+                  Posted by <span className="font-medium text-gray-900 dark:text-white">{post.author_details.username}</span> on{' '}
                   {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
                 </p>
               </div>
