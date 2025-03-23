@@ -60,7 +60,7 @@ const Posts = () => {
       setEditingPost(false);
       fetchData();
     } catch (error) {
-      console.error('Error updating post:', error);
+      console.error('Error Updating Post:', error);
     }
   }
 
