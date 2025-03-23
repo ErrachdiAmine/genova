@@ -41,10 +41,11 @@ const Login = () => {
         const user = await getCurrentUser();
         if (user) {
           setCurrentUser(user);
-        setIsLoadingUser(false);
-      }
+        }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoadingUser(false);
       }
     };
     fetchUser();
@@ -53,8 +54,7 @@ const Login = () => {
   const logout = () => {
     logoutUser(); // Use the logoutUser function
     setCurrentUser(null);
-    setIsLoadingUser(false);
-
+    setIsLoadingUser(false); // Reset loading state on logout
   };
 
   const validToken = isTokenValid(); // Use the isTokenValid function
@@ -64,7 +64,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 pt-16">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-        {   isLoadingUser ? (
+        {isLoadingUser ? (
           <div><LoadingScreen /></div>
         ) : currentUser ? (
           <>
@@ -118,6 +118,14 @@ const Login = () => {
               >
                 Login
               </button>
+              
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Don't have an account?</p>
+                <Link to="/Register" className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                  Sign up
+                </Link>
+              </div>
+              
             </form>
           </>
         )}
@@ -130,6 +138,7 @@ const Login = () => {
           </div>
         )}
 
+        
       </div>
     </div>
   );
