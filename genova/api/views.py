@@ -92,7 +92,7 @@ class PostsView(APIView):
             post = Post.objects.get(pk=pk)
             serializer = PostSerializer(
                 post,
-                data=request.data
+                data=request.data,
                 context={'request': request}  # for CurrentUserDefault    
             )
             if serializer.is_valid():
