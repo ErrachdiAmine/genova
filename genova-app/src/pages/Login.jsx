@@ -42,6 +42,7 @@ const Login = () => {
         if (user) {
           setCurrentUser(user);
         setIsLoadingUser(false);
+      }
       } catch (error) {
         console.log(error);
       }
