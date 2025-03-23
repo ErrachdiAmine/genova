@@ -47,6 +47,7 @@ const Posts = () => {
     setPostTitle(post.title);
     setPostBody(post.body);
     setShowForm(true);
+    
 
     // Update the post
     try {
