@@ -3,10 +3,12 @@ import { createBrowserRouter, Routes,Route, createRoutesFromElements, RouterProv
 import MainLayout from "./layouts/MainLayout"
 import Home from "./pages/Home"
 import Posts from "./pages/Posts"
+import ManagePosts from "./pages/ManagePosts"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import Signup from "./pages/Signup"
-import Settings from "./pages/settings"
+import Profile from "./pages/Profile"
+import Settings from "./pages/Settings"
 
 function App() {
 
@@ -15,7 +17,9 @@ function App() {
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Signup/>}/>
         <Route path="/" element={<Home/>}/>
+        <Route path="/Profile" element={<Profile/>}/>
         <Route path="/Posts" element={<Posts/>}/>
+        <Route path="/my-posts" element={<ManagePosts/>}/>
         <Route path="/Settings" element={<Settings/>}/>
         <Route path="*" element={<NotFound/>}/>
       </Route>

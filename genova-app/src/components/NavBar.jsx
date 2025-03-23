@@ -63,6 +63,15 @@ const NavBar = () => {
               <ul className="py-2">
                 <li>
                   <Link
+                    to="/Profile"
+                    className='block px-4 py-2 hover:bg-gray-700'
+                    onClick={handleLinkClick}
+                  >
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/Settings"
                     className="block px-4 py-2 hover:bg-gray-700"
                     onClick={handleLinkClick} // Close menu after clicking the link
