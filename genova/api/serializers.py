@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from core.models import *
 
-
-
-#serialize the User model
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -12,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
     
-    #check and validate the email ad username
+    # Validate email and username
     def validate_email(self, value):
         instance = self.instance
         if instance and instance.email == value:
@@ -29,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Username already exists.")
         return value
         
-    #hash the password before saving
+    # Hash the password before saving
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
@@ -49,22 +46,25 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class PostSerializer(serializers.ModelSerializer):
 
+class PostSerializer(serializers.ModelSerializer):
+    # Auto-set author to the authenticated user (write-only)
     author = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    
+    # Display author details when reading (no DB changes needed)
+    author_details = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Post
-        fields = ('id', 'title', 'body', 'author', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at', 'author')
-    
-    def create(self, validated_data):
-        post = Post.objects.create(**validated_data)
-        return post
-    
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.body = validated_data.get('body', instance.body)
-        instance.save()
-        return instance
+        fields = ('id', 'title', 'body', 'author', 'author_details', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'author_details')
+
+    def get_author_details(self, obj):
+        """Serialize author data for GET requests."""
+        return {
+            'id': obj.author.id,
+            'username': obj.author.username,
+            'email': obj.author.email
+        }
