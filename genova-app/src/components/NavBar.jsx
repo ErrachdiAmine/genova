@@ -32,7 +32,7 @@ const NavBar = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-gray-900 shadow-md p-4 z-50">
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between aligned">
         {/* Logo Section */}
         <div className="flex items-center gap-2">
           <img src="genova-logo.png" alt="logo" className="w-6 h-6 object-cover" />
