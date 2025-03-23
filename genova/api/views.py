@@ -90,7 +90,11 @@ class PostsView(APIView):
     def put(self, request, pk=None):
         try:
             post = Post.objects.get(pk=pk)
-            serializer = PostSerializer(post, data=request.data)
+            serializer = PostSerializer(
+                post,
+                data=request.data
+                context={'request': request}  # for CurrentUserDefault    
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
