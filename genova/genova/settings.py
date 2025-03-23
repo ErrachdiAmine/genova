@@ -132,9 +132,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('DB_NAME', 'railway'),
         'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'YIbpSjvUuPmDnqkmNpZgblvpxvEBJYRT'),
-        'HOST': os.getenv('DB_HOST', 'ballast.proxy.rlwy.net'),  # Ensure this is correct
-        'PORT': os.getenv('DB_PORT', '20953'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'fWNrDhPlWQncmpSWdnPybYHjMdfWcCHO'),
+        'HOST': os.getenv('DB_HOST', 'mysql-gp5r.railway.internal'),  # Ensure this is correct
+        'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
