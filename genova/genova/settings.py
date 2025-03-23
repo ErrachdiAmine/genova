@@ -133,8 +133,8 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', 'railway'),
         'USER': os.getenv('DB_USER', 'root'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'fWNrDhPlWQncmpSWdnPybYHjMdfWcCHO'),
-        'HOST': os.getenv('DB_HOST', 'mysql-gp5r.railway.internal'),  # Ensure this is correct
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'HOST': os.getenv('DB_HOST', 'interchange.proxy.rlwy.net'),  # Ensure this is correct
+        'PORT': os.getenv('DB_PORT', '36713'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
