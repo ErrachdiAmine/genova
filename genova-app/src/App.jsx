@@ -7,6 +7,7 @@ import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import Signup from "./pages/Signup"
 import Settings from "./pages/settings"
+
 function App() {
 
   const router = createBrowserRouter(createRoutesFromElements(
@@ -21,7 +22,8 @@ function App() {
   ))
 
   return (
-    <> 
+    <>
+    <Analytics />
     <RouterProvider router={router} />
     </>
   )
