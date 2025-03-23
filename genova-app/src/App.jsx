@@ -1,4 +1,4 @@
-
+import { Analytics } from "@vercel/analytics/react"
 import { createBrowserRouter, Routes,Route, createRoutesFromElements, RouterProvider } from "react-router-dom"
 import MainLayout from "./layouts/MainLayout"
 import Home from "./pages/Home"
