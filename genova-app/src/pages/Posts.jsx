@@ -183,18 +183,24 @@ const Posts = () => {
                   </button>
                   {showDropdown === post.id && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
-                      <button
-                        onClick={() => handlePostEdit(post.id)}
-                        className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeletePost(post.id)}
-                        className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600"
-                      >
-                        Delete
-                      </button>
+                      {getAccessToken() && (
+                      <>
+                        <button
+                          onClick={() => handlePostEdit(post.id)}
+                          className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+                        >
+                          Delete
+                        </button>
+                      
+                      </>
+                      )}
+                      
                     </div>
                   )}
                 </div>
