@@ -11,8 +11,10 @@ class UserAccessPermission(permissions.BasePermission):
         if request.method in ['GET', 'POST']:
             return True  # Allow GET and POST for all
         return request.user and request.user.is_authenticated  # Require auth for PUT/DELETE
-    
 
+class IsPostAuthor(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.author == request.user
 
 @api_view(['GET'])
 def check_login_status(request):
@@ -63,21 +65,24 @@ class UserView(APIView):
 
 class PostsView(APIView):
     authentication_classes = [JWTAuthentication]  # Always process JWT
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # GET=open, others=auth
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsPostAuthor]  # GET=open, others=auth
 
     # --- GET: List all posts (open to all) ---
     def get(self, request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
-
-    # --- POST: Create a new post (requires auth) ---
-    def post(self, request):
-        serializer = PostSerializer(data=request.data, context= {'request': request})
+        return Response(serializer.data)    def post(self, request):
+        serializer = PostSerializer(
+            data=request.data,
+            context={'request': request}  # Required for CurrentUserDefault
+        )
         if serializer.is_valid():
-            serializer.save()  
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # --- List All Posts (Shows author details) ---
+    
 
     # --- PUT: Update post (requires auth) ---
     def put(self, request, pk=None):
