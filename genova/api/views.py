@@ -71,7 +71,9 @@ class PostsView(APIView):
     def get(self, request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)    def post(self, request):
+        return Response(serializer.data)    
+    
+    def post(self, request):
         serializer = PostSerializer(
             data=request.data,
             context={'request': request}  # Required for CurrentUserDefault
