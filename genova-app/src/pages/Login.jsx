@@ -62,8 +62,8 @@ const Login = () => {
   console.log(validToken);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 pt-16">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 pt-16 p-6">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-md">
         {isLoadingUser ? (
           <div><LoadingScreen /></div>
         ) : currentUser ? (
