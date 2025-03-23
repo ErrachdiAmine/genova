@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-du_n)i=h+qva6p$+y7$zf*54hvuz80qld7k+lzat1#=68)1gy0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["genova-gsaa.onrender.com", "genova-drab.vercel.app", "genova-errachdi.vercel.app"]
 
