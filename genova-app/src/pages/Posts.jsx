@@ -179,6 +179,8 @@ const Posts = () => {
           {loading ? <LoadingScreen /> :
             posts.map((post) => {
               const isAuthor = getCurrentUser() === post.author_details.username;
+              console.log(post.author_details.username);
+              console.log(getCurrentUser());
               return (
                 <div
                   key={post.id}
