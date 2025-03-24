@@ -169,7 +169,7 @@ const Posts = () => {
                 }}
                 className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
               >
-                Cancel
+                Cancel 
               </button>
             </div>
           </form>
@@ -177,10 +177,10 @@ const Posts = () => {
 
         <div className="space-y-6">
           {loading ? <LoadingScreen /> :
-            posts.map((post) => {
-              const isAuthor = getCurrentUser() === post.author_details.username;
-              console.log(post.author_details.username);
-              console.log(getCurrentUser());
+            posts.map((post) => { 
+              const isAuthor = getCurrentUser() === post.author_details.username; // Check if the current user is the author of the post
+              console.log(post.author_details.username); 
+              console.log(getCurrentUser()); 
               return (
                 <div
                   key={post.id}
@@ -199,22 +199,6 @@ const Posts = () => {
                           <button className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'>
                             View
                           </button>
-                          {isAuthor && (
-                            <>
-                              <button
-                                onClick={() => handlePostEdit(post.id)}
-                                className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeletePost(post.id)}
-                                className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600"
-                              >
-                                Delete
-                              </button>
-                            </>
-                          )}
                         </div>
                       )}
                     </div>
