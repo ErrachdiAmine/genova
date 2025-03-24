@@ -1,24 +1,11 @@
 import { useState,useEffect } from "react";
 import axios from "axios";
-import { getAccessToken } from "../auth";
+import { getCurrentUser } from "../auth";
 
 
 const ManagePosts = () => {
 
     const [posts, setPosts] = useState([]);
-
-    
-    const getCurrentUser = () => {
-      const token = getAccessToken();
-      if (!token) return null;
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.username;
-      } catch (e) {
-        console.error('Error decoding token:', e);
-        return null;
-      }
-    };
 
     console.log(getCurrentUser());
 
