@@ -16,8 +16,7 @@ const ManagePosts = () => {
             { headers: { Authorization: `Bearer ${token}` } }
             );
             console.log(response);
-            const userPosts = response.filter(post => post.id === currentUser.id);
-            setPosts(userPosts);
+            response.map(post => console.log(post.id, post.title));
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
