@@ -6,8 +6,8 @@ import { getCurrentUser } from "../auth";
 const ManagePosts = () => {
 
     const [posts, setPosts] = useState([]);
-
-    console.log(getCurrentUser());
+    const user = getCurrentUser();
+    console.log(user);
 
     const fetshData = async () => {
         try {
