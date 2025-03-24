@@ -6,13 +6,13 @@ import { getCurrentUser } from "../auth";
 const ManagePosts = () => {
 
     const [posts, setPosts] = useState([]);
-    const user = getCurrentUser();
-    console.log(user);
+    const currentUser = getCurrentUser();
+    console.log(currentUser.username);
 
     const fetshData = async () => {
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/');
-            const userPosts = posts.filter(post => post.id === user.id);
+            const userPosts = response.filter(post => post.id === currentUser.id);
             setPosts(userPosts);
         } catch (error) {
             console.error('Error fetching posts:', error);
