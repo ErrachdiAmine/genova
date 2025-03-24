@@ -13,15 +13,16 @@ const ManagePosts = () => {
     const fetshData = async () => {
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', 
-            { headers: { Authorization: `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${token}`, 
+            'Content-Type': 'application/json'}}
             );
 
-            const posts = response.map((post) => {
-                (post.username === currentUser.username ? post : null)
+            const posts = response.data.map((post) => {
+                return (post.username === currentUser.username ? post : null)
             });
 
             setPosts(posts);
-            
+
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
