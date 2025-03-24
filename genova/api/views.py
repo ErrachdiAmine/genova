@@ -20,8 +20,12 @@ class IsPostAuthor(permissions.BasePermission):
 def check_login_status(request):
     """Endpoint to check if the user is logged in (works consistently across views)."""
     return Response({
+        'id': request.user.id if request.user.is_authenticated else None,
         'is_logged_in': request.user.is_authenticated,
-        'username': request.user.username if request.user.is_authenticated else None
+        'username': request.user.username if request.user.is_authenticated else None,
+        'email': request.user.email if request.user.is_authenticated else None,
+        'first_name': request.user.first_name if request.user.is_authenticated else None,
+        'last_name': request.user.last_name if request.user.is_authenticated else None
     })
 
 class UserView(APIView):
