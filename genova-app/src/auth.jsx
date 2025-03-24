@@ -99,5 +99,5 @@ export const getCurrentUser = async () => {
     },
   });
   
-  return response.data.username; // Return the username of the logged-in user
+  return response.data; // Return the logged-in user
 }
