@@ -1,17 +1,20 @@
 import { useState,useEffect } from "react";
 import axios from "axios";
 import { getCurrentUser } from "../auth";
+import { getAccessToken } from "../auth";
 
 
 const ManagePosts = () => {
-
+    const token = getAccessToken();
     const [posts, setPosts] = useState([]);
     const currentUser = getCurrentUser();
     console.log(currentUser.username);
 
     const fetshData = async () => {
         try {
-            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/');
+            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', 
+            { headers: { Authorization: `Bearer ${token}` } }
+            );
             console.log(response);
             const userPosts = response.filter(post => post.id === currentUser.id);
             setPosts(userPosts);
