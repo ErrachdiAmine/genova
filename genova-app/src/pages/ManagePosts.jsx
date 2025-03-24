@@ -12,6 +12,7 @@ const ManagePosts = () => {
     const fetshData = async () => {
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/');
+            console.log(response);
             const userPosts = response.filter(post => post.id === currentUser.id);
             setPosts(userPosts);
         } catch (error) {
