@@ -12,12 +12,14 @@ const ManagePosts = () => {
       if (!token) return null;
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.id;
+        return payload.username;
       } catch (e) {
         console.error('Error decoding token:', e);
         return null;
       }
     };
+
+    console.log(getCurrentUser());
 
     const fetshData = async () => {
         try {
