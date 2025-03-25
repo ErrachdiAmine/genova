@@ -98,6 +98,8 @@ export const getCurrentUser = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  console.log(response.data);
   
   return response.data; // Return the logged-in user
 }
