@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
+import { Link } from "react-router-dom";
 import LoadingScreen from "../components/postManagementLoading";
 
 const ManagePosts = () => {
@@ -87,10 +88,12 @@ const ManagePosts = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 pt-16">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Manage Posts</h1>
-                
+
                 {posts.length === 0 ? (
                     <div className="text-center py-12">
-                        <LoadingScreen />
+                        <p className="text-gray-600 dark:text-gray-400">No posts found. 
+                            <Link to="/posts"> Create your first post.</Link>
+                        </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
