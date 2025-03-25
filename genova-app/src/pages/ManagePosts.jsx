@@ -54,9 +54,8 @@ const ManagePosts = () => {
                 ? response.data.filter(post => 
                     post.author_details?.id === userId
                 ) 
-                : console.log("Author ID: ", response.data.author_details?.id);
+                : [];
             setPosts(userPosts);
-            console.log("User Posts: ", userPosts);
         } catch (error) {
             toast.error('Failed to load posts');
         } finally {
@@ -65,7 +64,7 @@ const ManagePosts = () => {
     };
     useEffect(() => {
         fetchData();
-        }, []);
+        }, [ token, userId ]);
    
     
     // Add state for editing
