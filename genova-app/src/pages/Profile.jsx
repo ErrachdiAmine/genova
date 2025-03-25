@@ -5,14 +5,14 @@ import { getCurrentUser } from '../auth';
 
 const Profile = () => {
 
-    const [loggedinUser , setLoggedinUser] = useState(null);
+    const [user , setUser] = useState( {} );
 
     useEffect(() => {
             const fetchUser = async () => {
               try {
                 const user = await getCurrentUser();
                 if (user) {
-                  setLoggedinUser(user);
+                  setUser(user);
                 }
               } catch (error) {
                 console.log(error);
@@ -28,9 +28,9 @@ const Profile = () => {
 
     // Mock user data (replace with real data from your auth system)
     const user = {
-        name: loggedinUser.username,
-        emailAdress: loggedinUser.email,
-        username: loggedinUser.username,
+        name: user.username,
+        email: user.email,
+        username: user.username,
         joined: "2023-01-15",
         postsCount: 27,
         avatar: "https://via.placeholder.com/150",
@@ -66,7 +66,7 @@ const Profile = () => {
                         <div className="flex items-center space-x-2">
                             <FaEnvelope className="text-gray-500 dark:text-gray-300" />
                             <span className="font-medium">Email:</span>
-                            <span>{user.emailAdress}</span>
+                            <span>{user.email}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
