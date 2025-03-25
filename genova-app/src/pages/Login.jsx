@@ -40,7 +40,7 @@ const Login = () => {
       try {
         const user = await getCurrentUser();
         if (user) {
-          setCurrentUser(user);
+          setCurrentUser(user.username);
         }
       } catch (error) {
         console.log(error);
