@@ -81,7 +81,7 @@ const ManagePosts = () => {
     };
     
     const handleUpdate = async () => {
-        if (!currentUser || editPost.author_details.id !== currentUser.id) {
+        if (editPost.author_details.id !== userId) {
             toast.error('Unauthorized action');
             return;
         }
