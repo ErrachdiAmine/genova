@@ -26,12 +26,14 @@ const ManagePosts = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                console.log("Token:", token);
-                console.log("Current User:", currentUser);
-                console.log("API Response:", response.data);
-
                 // Ensure response.data is an array before filtering
-                setPosts(Array.isArray(response.data) ? response.data : []);
+                const userPosts = Array.isArray(response.data) 
+                    ? response.data.filter(post => 
+                        post.author_details?.id === currentUser.id
+                    ) 
+                    : [];
+                setPosts(userPosts);
+
             } catch (error) {
                 console.error('Error fetching posts:', error);
             }
