@@ -1,4 +1,6 @@
 import { Analytics } from "@vercel/analytics/react"
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { createBrowserRouter, Routes,Route, createRoutesFromElements, RouterProvider } from "react-router-dom"
 import MainLayout from "./layouts/MainLayout"
 import Home from "./pages/Home"
@@ -29,6 +31,7 @@ function App() {
     <>
     <Analytics />
     <RouterProvider router={router} />
+    <ToastContainer />
     </>
   )
 }
