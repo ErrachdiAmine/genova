@@ -1,15 +1,35 @@
 import { Link } from 'react-router-dom';
 import { FaEdit, FaUser, FaEnvelope, FaCalendar, FaNewspaper } from 'react-icons/fa';
+import { useEffect } from 'react';
 
 const Profile = () => {
-    const isDarkMode = localStorage.getItem('theme') === 'dark';
-    document.documentElement.classList.toggle('dark', isDarkMode);
+
+    const [user , setUser] = useState(null);
+
+    useEffect(() => {
+            const fetchUser = async () => {
+              try {
+                const user = await getCurrentUser();
+                if (user) {
+                  setUser(user);
+                }
+              } catch (error) {
+                console.log(error);
+              }
+            };
+            fetchUser();
+    }, []);
+
+    useEffect (() => {
+        const isDarkMode = localStorage.getItem('theme') === 'dark';
+        document.documentElement.classList.toggle('dark', isDarkMode);});
+    
 
     // Mock user data (replace with real data from your auth system)
     const user = {
-        name: "John Doe",
-        email: "john@example.com",
-        username: "johndoe123",
+        name: user.username,
+        email: user.email,
+        username: user.username,
         joined: "2023-01-15",
         postsCount: 27,
         avatar: "https://via.placeholder.com/150",
