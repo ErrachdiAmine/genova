@@ -6,6 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import User, Post
 from .serializers import UserSerializer, PostSerializer
 
+
 class UserAccessPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in ['GET', 'POST']:
