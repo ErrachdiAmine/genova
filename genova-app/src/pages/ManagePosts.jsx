@@ -10,6 +10,7 @@ const ManagePosts = () => {
     const currentUser = getCurrentUser();
     console.log(currentUser.username);
 
+    
     const fetchData = async () => {
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
@@ -26,6 +27,10 @@ const ManagePosts = () => {
             console.error('Error fetching posts:', error);
         }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
     
 
     useEffect(() => {
