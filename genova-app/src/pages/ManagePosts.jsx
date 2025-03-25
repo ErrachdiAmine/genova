@@ -13,8 +13,7 @@ const ManagePosts = () => {
     const fetshData = async () => {
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', 
-            { headers: { Authorization: `Bearer ${token}`, 
-            'Content-Type': 'application/json'}}
+            { headers: { Authorization: `Bearer ${token}`}}
             );
 
             const posts = response.data.map((post) => {
