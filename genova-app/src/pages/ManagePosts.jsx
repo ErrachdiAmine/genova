@@ -1,4 +1,15 @@
+import { useState,useEffect } from "react";
+import axios from "axios";
+import { getCurrentUser } from "../auth";
+import { getAccessToken } from "../auth";
+
+const token = getAccessToken();
+const currentUser = getCurrentUser();
+
 useEffect(() => {
+
+    
+    
     const fetchData = async () => {
         if (!token || !currentUser) {
             console.warn("Token or Current User is missing, skipping API call.");
