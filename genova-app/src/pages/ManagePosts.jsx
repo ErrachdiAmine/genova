@@ -16,7 +16,9 @@ const ManagePosts = () => {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
                 headers: { Authorization: `Bearer ${token}` }
             });
-    
+            console.log("Token:", token);
+            console.log("Current User:", currentUser);
+            console.log("API Response:", response.data);    
             // Ensure response.data is an array before filtering
             const posts = Array.isArray(response.data)
                 ? response.data.filter(post => post.username === currentUser.username)
@@ -34,9 +36,7 @@ const ManagePosts = () => {
     }
     , []);
 
-    console.log("Token:", token);
-    console.log("Current User:", currentUser);
-    console.log("API Response:", response.data);
+    
 
 
     return (
