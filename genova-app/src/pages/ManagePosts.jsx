@@ -60,7 +60,7 @@ const ManagePosts = () => {
     };
     useEffect(() => {
         fetchData();
-        }, [ token, user.id ]);
+        }, [ token, user ]);
    
     
     // Add state for editing
