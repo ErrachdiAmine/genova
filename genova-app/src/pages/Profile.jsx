@@ -29,7 +29,7 @@ const Profile = () => {
     // Mock user data (replace with real data from your auth system)
     const user = {
         name: loggedinUser.username,
-        email: loggedinUser.email,
+        emailAdress: loggedinUser.email,
         username: loggedinUser.username,
         joined: "2023-01-15",
         postsCount: 27,
@@ -66,7 +66,7 @@ const Profile = () => {
                         <div className="flex items-center space-x-2">
                             <FaEnvelope className="text-gray-500 dark:text-gray-300" />
                             <span className="font-medium">Email:</span>
-                            <span>{user.email}</span>
+                            <span>{user.emailAdress}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
