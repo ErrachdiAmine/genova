@@ -12,12 +12,10 @@ const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user , setUser] = useState(null);
-    const [isLoadingUser , setIsLoadingUser] = useState(null);
     const token = getAccessToken();
 
     useEffect(() => {
         const fetchUser = async () => {
-          setIsLoadingUser(true);
           try {
             const user = await getCurrentUser();
             if (user) {
@@ -25,8 +23,6 @@ const ManagePosts = () => {
             }
           } catch (error) {
             console.log(error);
-          } finally {
-            setIsLoadingUser(false);
           }
         };
         fetchUser();
