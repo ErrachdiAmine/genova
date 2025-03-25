@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [userId , setUserId] = useState(null);
+    const [user , setUser] = useState(null);
     const [isLoadingUser , setIsLoadingUser] = useState(null);
     const token = getAccessToken();
 
@@ -21,7 +21,7 @@ const ManagePosts = () => {
           try {
             const user = await getCurrentUser();
             if (user) {
-              setUserId(user.id);
+              setUser(user);
             }
           } catch (error) {
             console.log(error);
@@ -39,7 +39,7 @@ const ManagePosts = () => {
 
 
     const fetchData = async () => {
-        if (!token || !userId) {
+        if (!token || !user.id) {
             setLoading(false);
             return;
         }
@@ -52,7 +52,7 @@ const ManagePosts = () => {
 
             const userPosts = Array.isArray(response.data) 
                 ? response.data.filter(post => 
-                    post.author_details?.id === userId
+                    post.author_details?.id === user.id
                 ) 
                 : [];
             setPosts(userPosts);
@@ -64,7 +64,7 @@ const ManagePosts = () => {
     };
     useEffect(() => {
         fetchData();
-        }, [ token, userId ]);
+        }, [ token, user.id ]);
    
     
     // Add state for editing
@@ -81,7 +81,7 @@ const ManagePosts = () => {
     };
     
     const handleUpdate = async () => {
-        if (editPost.author_details.id !== userId) {
+        if (editPost.author_details.id !== user.id) {
             toast.error('Unauthorized action');
             return;
         }
