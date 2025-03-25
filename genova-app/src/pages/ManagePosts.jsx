@@ -27,14 +27,10 @@ const ManagePosts = () => {
             console.error('Error fetching posts:', error);
         }
     };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
     
 
     useEffect(() => {
-        fetshData()
+        fetchData
     }
     , []);
 
