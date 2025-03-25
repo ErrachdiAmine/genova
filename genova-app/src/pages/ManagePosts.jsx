@@ -128,7 +128,7 @@ const ManagePosts = () => {
                                 <div className="border-t pt-4 border-gray-200 dark:border-gray-700">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-gray-500 dark:text-gray-400">
-                                            Posted by: {post.author?.username || 'Unknown'}
+                                            Posted by: {post.author_details?.username || 'Unknown'}
                                         </span>
                                         <span className="text-gray-500 dark:text-gray-400">
                                             {new Date(post.created_at).toLocaleDateString()}
