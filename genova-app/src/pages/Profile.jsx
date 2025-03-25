@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FaEdit, FaUser, FaEnvelope, FaCalendar, FaNewspaper } from 'react-icons/fa';
-import { useEffect } from 'react';
+import { useState ,useEffect } from 'react';
 
 const Profile = () => {
 
