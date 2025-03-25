@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
+import LoadingScreen from "../components/PostsLoading";
 
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
@@ -38,7 +39,7 @@ const ManagePosts = () => {
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
             {posts?.length > 0 ? posts.map((post, index) => (
                 <p key={post.id || index}>{post.title}</p>
-            )) : <p>No posts found.</p>}
+            )) : <LoadingScreen />}
         </div>
     );
 };
