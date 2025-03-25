@@ -99,7 +99,7 @@ export const getCurrentUser = async () => {
     },
   });
 
-  console.log(response.data);
+  console.log(response.data.id);
   
-  return response.data; // Return the logged-in user
+  return response.data.id; // Return the logged-in user
 }

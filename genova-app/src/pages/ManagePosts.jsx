@@ -12,7 +12,7 @@ const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const token = getAccessToken();
-    const currentUser = getCurrentUser();
+    const userId = getCurrentUser();
 
     useEffect(() => {
         const isDarkMode = localStorage.getItem('theme') === 'dark';
@@ -21,7 +21,7 @@ const ManagePosts = () => {
 
 
     const fetchData = async () => {
-        if (!token || !currentUser) {
+        if (!token || !userId) {
             setLoading(false);
             return;
         }
@@ -34,7 +34,7 @@ const ManagePosts = () => {
 
             const userPosts = Array.isArray(response.data) 
                 ? response.data.filter(post => 
-                    post.author_details?.id === currentUser.id
+                    post.author_details?.id === userId
                 ) 
                 : [];
             setPosts(userPosts);
