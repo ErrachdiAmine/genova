@@ -9,6 +9,10 @@ const ManagePosts = () => {
     const token = getAccessToken();
     const currentUser = getCurrentUser();
 
+    const isDarkMode = localStorage.getItem('theme') === 'dark';
+    {isDarkMode ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark') }
+  
+
     useEffect(() => {
         const fetchData = async () => {
             if (!token || !currentUser) {
@@ -86,7 +90,7 @@ const ManagePosts = () => {
                 
                 {posts.length === 0 ? (
                     <div className="text-center py-12">
-                        <p className="text-gray-600 dark:text-gray-400 text-lg">No posts found</p>
+                        <LoadingScreen />
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
