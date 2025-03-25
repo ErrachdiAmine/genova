@@ -34,7 +34,7 @@ const ManagePosts = () => {
 
             const userPosts = Array.isArray(response.data) 
                 ? response.data.filter(post => 
-                    post.author_details?.id === currentUser.id
+                    console.log(post)
                 ) 
                 : [];
             setPosts(userPosts);
