@@ -10,7 +10,29 @@ const ManagePosts = () => {
     const currentUser = getCurrentUser();
 
     useEffect(() => {
-        // ... existing fetchData logic
+        const fetchData = async () => {
+            if (!token || !currentUser) {
+                console.warn("Token or Current User is missing, skipping API call.");
+                return;
+            }
+
+            try {
+                const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                console.log("Token:", token);
+                console.log("Current User:", currentUser);
+                console.log("API Response:", response.data);
+
+                // Ensure response.data is an array before filtering
+                setPosts(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
+
+        fetchData();
     }, [token, currentUser]);
     
     // Add state for editing
@@ -58,7 +80,7 @@ const ManagePosts = () => {
     };
     
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 p-16">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Manage Posts</h1>
                 
