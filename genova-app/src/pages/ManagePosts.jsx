@@ -27,7 +27,7 @@ const ManagePosts = () => {
             }
 
             try {
-                const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
+                const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

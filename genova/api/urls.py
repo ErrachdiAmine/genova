@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserView, PostsView, check_login_status
+from .views import UserView, PostsView, check_login_status, Myposts
 
 
 app_name = 'api'
@@ -9,5 +9,6 @@ urlpatterns = [
   path('users/<int:pk>/', UserView.as_view(), name='user-detail'),
   path('posts/', PostsView.as_view(), name='posts'),
   path('posts/<int:pk>/', PostsView.as_view(), name='post-detail'),
+  path('posts/my-posts/', Myposts.as_view(), name='my-posts'),
   path('check_login_status/', check_login_status, name='check_login_status'),
 ]
