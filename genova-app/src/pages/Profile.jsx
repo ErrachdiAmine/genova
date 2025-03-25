@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FaEdit, FaUser, FaEnvelope, FaCalendar, FaNewspaper } from 'react-icons/fa';
 import { useState ,useEffect } from 'react';
+import { getCurrentUser } from '../auth';
 
 const Profile = () => {
 
