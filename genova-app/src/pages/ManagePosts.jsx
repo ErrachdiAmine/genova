@@ -32,7 +32,7 @@ const ManagePosts = () => {
 
         fetchData();
     }
-    , []);
+    , [ token, currentUser ]);
 
     
 
