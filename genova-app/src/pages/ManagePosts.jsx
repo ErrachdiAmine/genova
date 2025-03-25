@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
-import LoadingScreen from "../components/PostsLoading";
+import LoadingScreen from "../components/postManagementLoading";
 
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
