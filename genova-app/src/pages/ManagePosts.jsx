@@ -19,33 +19,34 @@ const ManagePosts = () => {
         document.documentElement.classList.toggle('dark', isDarkMode);
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!token || !currentUser) {
-                setLoading(false);
-                return;
-            }
 
-            try {
-                const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+    const fetchData = async () => {
+        if (!token || !currentUser) {
+            setLoading(false);
+            return;
+        }
 
-                const userPosts = Array.isArray(response.data) 
-                    ? response.data.filter(post => 
-                        post.author_details?.id === currentUser.id
-                    ) 
-                    : [];
-                setPosts(userPosts);
-            } catch (error) {
-                toast.error('Failed to load posts');
-            } finally {
-                setLoading(false);
-            }
-        };
+        try {
+            setLoading (true);
+            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-        fetchData();
-    }, [token, currentUser]);
+            const userPosts = Array.isArray(response.data) 
+                ? response.data.filter(post => 
+                    post.author_details?.id === currentUser.id
+                ) 
+                : [];
+            setPosts(userPosts);
+        } catch (error) {
+            toast.error('Failed to load posts');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+   
     
     // Add state for editing
     const [editPost, setEditPost] = useState(null);
