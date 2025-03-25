@@ -106,13 +106,12 @@ const Posts = () => {
                 type="submit"
                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
               >
-                {editingPost ? 'Update Post' : 'Create Post'}
+                Create Post
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setShowForm(false);
-                  setEditingPost(null);
                 }}
                 className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
               >
