@@ -44,8 +44,9 @@ const ManagePosts = () => {
             setLoading(false);
         }
     };
-
-    fetchData();
+    useEffect(() => {
+        fetchData();
+        }, []);
    
     
     // Add state for editing
