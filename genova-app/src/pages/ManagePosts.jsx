@@ -34,6 +34,11 @@ const ManagePosts = () => {
     }
     , []);
 
+    console.log("Token:", token);
+    console.log("Current User:", currentUser);
+    console.log("API Response:", response.data);
+
+
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
         <h1>{posts}</h1>
