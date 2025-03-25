@@ -7,15 +7,8 @@ const token = getAccessToken();
 const currentUser = getCurrentUser();
 
 useEffect(() => {
-
-    
     
     const fetchData = async () => {
-        if (!token || !currentUser) {
-            console.warn("Token or Current User is missing, skipping API call.");
-            return;
-        }
-
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
                 headers: { Authorization: `Bearer ${token}` }
