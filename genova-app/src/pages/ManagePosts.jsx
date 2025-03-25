@@ -7,22 +7,22 @@ import LoadingScreen from "../components/postManagementLoading";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Inside the component
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const token = getAccessToken();
     const currentUser = getCurrentUser();
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const isDarkMode = localStorage.getItem('theme') === 'dark';
         document.documentElement.classList.toggle('dark', isDarkMode);
-    });
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading (true);
             if (!token || !currentUser) {
-                console.warn("Token or Current User is missing, skipping API call.");
+                setLoading(false);
                 return;
             }
 
@@ -31,18 +31,16 @@ const ManagePosts = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                // Ensure response.data is an array before filtering
                 const userPosts = Array.isArray(response.data) 
                     ? response.data.filter(post => 
                         post.author_details?.id === currentUser.id
                     ) 
                     : [];
                 setPosts(userPosts);
-
             } catch (error) {
-                console.error('Error fetching posts:', error);
+                toast.error('Failed to load posts');
             } finally {
-                setLoading (false);
+                setLoading(false);
             }
         };
 
@@ -67,7 +65,7 @@ const ManagePosts = () => {
             toast.error('Unauthorized action');
             return;
         }
-        
+
         try {
             const response = await axios.put(
                 `https://genova-gsaa.onrender.com/api/posts/${editPost.id}/`,
