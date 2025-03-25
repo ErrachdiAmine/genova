@@ -99,7 +99,7 @@ export const getCurrentUser = async () => {
     },
   });
 
-  console.log("Logged In User Id: ", response.data.id);
+  console.log("Logged In User Id: ", response.data.email);
   
   return response.data; // Return the logged-in user
 }
