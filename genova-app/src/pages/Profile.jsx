@@ -27,7 +27,7 @@ const Profile = () => {
     
 
     // Mock user data (replace with real data from your auth system)
-    const user = {
+    const User = {
         name: user.username,
         email: user.email,
         username: user.username,
@@ -43,7 +43,7 @@ const Profile = () => {
                 <div className="flex flex-col items-center space-y-4">
                     <div className="relative group">
                         <img 
-                            src={user.avatar} 
+                            src={User.avatar} 
                             alt="Profile" 
                             className="w-32 h-32 rounded-full border-4 border-purple-500 dark:border-purple-600"
                         />
@@ -51,8 +51,8 @@ const Profile = () => {
                             <FaEdit className="text-white" />
                         </button>
                     </div>
-                    <h1 className="text-3xl font-bold">{user.name}</h1>
-                    <p className="text-gray-600 dark:text-gray-300">@{user.username}</p>
+                    <h1 className="text-3xl font-bold">{User.name}</h1>
+                    <p className="text-gray-600 dark:text-gray-300">@{User.username}</p>
                 </div>
 
                 {/* User Information Section */}
@@ -66,7 +66,7 @@ const Profile = () => {
                         <div className="flex items-center space-x-2">
                             <FaEnvelope className="text-gray-500 dark:text-gray-300" />
                             <span className="font-medium">Email:</span>
-                            <span>{user.email}</span>
+                            <span>{User.email}</span>
                         </div>
                         
                         <div className="flex items-center space-x-2">
@@ -88,7 +88,7 @@ const Profile = () => {
                         <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                             <h3 className="text-lg font-semibold mb-2">Your Activity</h3>
                             <p className="text-gray-600 dark:text-gray-300">
-                                Total Posts: {user.postsCount}
+                                Total Posts: {User.postsCount}
                             </p>
                             <p className="text-gray-600 dark:text-gray-300">
                                 Latest Post: 2 days ago
