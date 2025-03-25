@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 
 const Profile = () => {
 
-    const [user , setUser] = useState(null);
+    const [loggedinUser , setLoggedinUser] = useState(null);
 
     useEffect(() => {
             const fetchUser = async () => {
               try {
                 const user = await getCurrentUser();
                 if (user) {
-                  setUser(user);
+                  setLoggedinUser(user);
                 }
               } catch (error) {
                 console.log(error);
@@ -27,9 +27,9 @@ const Profile = () => {
 
     // Mock user data (replace with real data from your auth system)
     const user = {
-        name: user.username,
-        email: user.email,
-        username: user.username,
+        name: loggedinUser.username,
+        email: loggedinUser.email,
+        username: loggedinUser.username,
         joined: "2023-01-15",
         postsCount: 27,
         avatar: "https://via.placeholder.com/150",
