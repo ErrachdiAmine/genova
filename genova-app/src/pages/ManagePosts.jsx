@@ -10,22 +10,23 @@ const ManagePosts = () => {
     const currentUser = getCurrentUser();
     console.log(currentUser.username);
 
-    const fetshData = async () => {
+    const fetchData = async () => {
         try {
-            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', 
-            { headers: { Authorization: `Bearer ${token}`}}
-            );
-
-            const posts = response.data.map((post) => {
-                return (post.username === currentUser.username ? post : null)
+            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
+                headers: { Authorization: `Bearer ${token}` }
             });
-
+    
+            // Ensure response.data is an array before filtering
+            const posts = Array.isArray(response.data)
+                ? response.data.filter(post => post.username === currentUser.username)
+                : [];
+    
             setPosts(posts);
-
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
     };
+    
 
     useEffect(() => {
         fetshData()
