@@ -11,8 +11,25 @@ import 'react-toastify/dist/ReactToastify.css';
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [userId , setUserId] = useState(null);
     const token = getAccessToken();
-    const userId = getCurrentUser();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+          setIsLoadingUser(true);
+          try {
+            const user = await getCurrentUser();
+            if (user) {
+              setUserId(user.id);
+            }
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setIsLoadingUser(false);
+          }
+        };
+        fetchUser();
+    }, []);
 
     useEffect(() => {
         const isDarkMode = localStorage.getItem('theme') === 'dark';
