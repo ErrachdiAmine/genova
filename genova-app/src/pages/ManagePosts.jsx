@@ -92,12 +92,17 @@ const ManagePosts = () => {
                 {posts.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-gray-600 dark:text-gray-400">No posts found. 
-                            <Link to="/posts"> Create your first post.</Link>
+                            <Link 
+                                to="/posts"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text"
+                            >
+                                Create your first post.
+                            </Link>
                         </p>
                     </div>
-                ) : (
+                ) :  (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {posts.map((post) => (
+                        {posts.map((post) => post.author_details.id === currentUser.id ? (
                             <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -144,7 +149,7 @@ const ManagePosts = () => {
                                     )}
                                 </div>
                             </div>
-                        ))}
+                        ) : null)}
                     </div>
                 )}
     
