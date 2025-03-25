@@ -35,7 +35,7 @@ const ManagePosts = () => {
 
 
     const fetchData = async () => {
-        if (!token || !user.id) {
+        if (!token || !user ) {
             setLoading(false);
             return;
         }
