@@ -1,37 +1,46 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
 
-const token = getAccessToken();
-const currentUser = getCurrentUser();
+const ManagePosts = () => {
+    const [posts, setPosts] = useState([]);
+    const token = getAccessToken();
+    const currentUser = getCurrentUser();
 
-useEffect(() => {
-    
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!token || !currentUser) {
+                console.warn("Token or Current User is missing, skipping API call.");
+                return;
+            }
 
-            console.log("Token:", token);
-            console.log("Current User:", currentUser);
-            console.log("API Response:", response.data);
+            try {
+                const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-            // Ensure response.data is an array before filtering
-            setPosts(Array.isArray(response.data) ? response.data : []);
-        } catch (error) {
-            console.error('Error fetching posts:', error);
-        }
-    };
+                console.log("Token:", token);
+                console.log("Current User:", currentUser);
+                console.log("API Response:", response.data);
 
-    fetchData();
-}, [token, currentUser]);
+                // Ensure response.data is an array before filtering
+                setPosts(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        };
 
-return (
-    <div>
-        {posts?.length > 0 ? posts.map((post, index) => (
-            <p key={post.id || index}>{post.title}</p>
-        )) : <p>No posts found.</p>}
-    </div>
-);
+        fetchData();
+    }, [token, currentUser]);
+
+    return (
+        <div>
+            {posts?.length > 0 ? posts.map((post, index) => (
+                <p key={post.id || index}>{post.title}</p>
+            )) : <p>No posts found.</p>}
+        </div>
+    );
+};
+
+export default ManagePosts;
