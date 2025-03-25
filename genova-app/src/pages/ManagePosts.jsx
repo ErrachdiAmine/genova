@@ -4,18 +4,23 @@ import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
 import { Link } from "react-router-dom";
 import LoadingScreen from "../components/postManagementLoading";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
     const token = getAccessToken();
     const currentUser = getCurrentUser();
+    const [loading, setLoading] = useState(true);
 
-    const isDarkMode = localStorage.getItem('theme') === 'dark';
-    {isDarkMode ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark') }
-  
+    useEffect(() => {
+        const isDarkMode = localStorage.getItem('theme') === 'dark';
+        document.documentElement.classList.toggle('dark', isDarkMode);
+    });
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading (true);
             if (!token || !currentUser) {
                 console.warn("Token or Current User is missing, skipping API call.");
                 return;
@@ -36,6 +41,8 @@ const ManagePosts = () => {
 
             } catch (error) {
                 console.error('Error fetching posts:', error);
+            } finally {
+                setLoading (false);
             }
         };
 
@@ -56,6 +63,11 @@ const ManagePosts = () => {
     };
     
     const handleUpdate = async () => {
+        if (!currentUser || editPost.author_details.id !== currentUser.id) {
+            toast.error('Unauthorized action');
+            return;
+        }
+        
         try {
             const response = await axios.put(
                 `https://genova-gsaa.onrender.com/api/posts/${editPost.id}/`,
@@ -96,7 +108,7 @@ const ManagePosts = () => {
                         <p className="text-gray-600 dark:text-gray-400">No posts found. 
                             <Link 
                                 to="/posts"
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"  
                             >
                                 Create your first post.
                             </Link>
@@ -104,8 +116,7 @@ const ManagePosts = () => {
                     </div>
                 ) :  (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {posts.map((post) => (
-                        
+                        { loading? <LoadingScreen /> : (posts.map((post) => (
                             <div key={post.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -152,7 +163,7 @@ const ManagePosts = () => {
                                     )}
                                 </div>
                             </div>
-                        ))}
+                        )))}
                     </div>
                 )}
     
