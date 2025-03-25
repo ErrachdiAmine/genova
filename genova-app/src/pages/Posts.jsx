@@ -4,18 +4,7 @@ import axios from 'axios';
 import LoadingScreen from '../components/PostsLoading';
 import { FaEllipsisV } from 'react-icons/fa';
 
-// Helper function to get current user from JWT
-const getCurrentUser = () => {
-  const token = getAccessToken();
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.username;
-  } catch (e) {
-    console.error('Error decoding token:', e);
-    return null;
-  }
-};
+
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -24,7 +13,6 @@ const Posts = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const [editingPost, setEditingPost] = useState(null);
   const API_URL = "https://genova-gsaa.onrender.com";
 
   useEffect(() => {
@@ -52,36 +40,6 @@ const Posts = () => {
     setShowDropdown(showDropdown === postId ? null : postId);
   };
 
-  const handlePostEdit = (postId) => {
-    const post = posts.find((post) => post.id === postId);
-    if (post) {
-      setPostTitle(post.title);
-      setPostBody(post.body);
-      setEditingPost(post);
-      setShowForm(true);
-    }
-    setShowDropdown(null);
-  };
-
-  const handleDeletePost = async (postId) => {
-    const token = getAccessToken();
-    if (!token) return;
-
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      try {
-        await axios.delete(`${API_URL}/api/posts/${postId}/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        fetchData();
-        alert('Post deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting post:', error);
-        alert('Failed to delete post.');
-      }
-    }
-    setShowDropdown(null);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = getAccessToken();
@@ -91,31 +49,20 @@ const Posts = () => {
     }
 
     try {
-      if (editingPost) {
-        await axios.put(
-          `${API_URL}/api/posts/${editingPost.id}/`,
-          { title: postTitle, body: postBody },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        alert('Post updated successfully!');
-      } else {
-        await axios.post(
-          `${API_URL}/api/posts/`,
-          { title: postTitle, body: postBody },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        alert('Post created successfully!');
-      }
+      await axios.post(
+        `${API_URL}/api/posts/`,
+        { title: postTitle, body: postBody },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Post created successfully!');
       
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
-      setEditingPost(null);
       await fetchData();
       
     } catch (error) {
-      console.error('Error saving post:', error);
-      alert(`Error: ${error.response?.data?.message || 'Failed to save post'}`);
+      console.error('Error posting:', error);
     }
   };
 
@@ -178,15 +125,13 @@ const Posts = () => {
         <div className="space-y-6">
           {loading ? <LoadingScreen /> :
             posts.map((post) => { 
-              const isAuthor = getCurrentUser() === post.author_details.username; // Check if the current user is the author of the post
               console.log(post.author_details.username); 
-              console.log(getCurrentUser()); 
               return (
                 <div
                   key={post.id}
                   className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative"
                 >
-                  {(isAuthor || getAccessToken()) && (
+                  {( getAccessToken()) && (
                     <div className="absolute top-4 right-4">
                       <button
                         onClick={() => toggleDropdown(post.id)}
