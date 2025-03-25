@@ -12,6 +12,7 @@ const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [userId , setUserId] = useState(null);
+    const [isLoadingUser , setIsLoadingUser] = useState(null);
     const token = getAccessToken();
 
     useEffect(() => {
