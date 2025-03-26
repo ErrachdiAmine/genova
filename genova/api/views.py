@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import User, Post
-from .serializers import UserSerializer, PostSerializer, ProfileSerializer
+from .serializers import UserSerializer, UserDetailSerializer, PostSerializer, ProfileSerializer
 from rest_framework.parsers import MultiPartParser, JSONParser
 
 
@@ -19,7 +20,6 @@ class IsPostAuthor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.author == request.user
 
-@api_view(['GET'])
 def check_login_status(request):
     """Endpoint to check if the user is logged in (works consistently across views)."""
     return Response({
@@ -74,7 +74,18 @@ class UserView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
-class ProfileUpdate(APIView):
+
+# user detail view
+
+
+class UserDetailView(RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserDetailSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'user_id'
+        
+    
+class ProfileView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     parser_classes = [MultiPartParser, JSONParser]  # For file uploads
@@ -213,6 +224,20 @@ class PostsView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Post.DoesNotExist:
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class PostDetailView (APIView):
+    authentication_classes = [JWTAuthentication]  # Always process JWT
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsPostAuthor]  # GET=open, others
+
+    def get(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+            serializer = PostSerializer(post)
+            return Response(serializer.data)
+        except Post.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
         
 
 class Myposts(APIView) : 

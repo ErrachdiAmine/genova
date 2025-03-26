@@ -46,6 +46,36 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='user-detail',
+        lookup_field='id',
+        lookup_url_kwarg='user_id'
+    )
+    
+    posts = serializers.HyperlinkedRelatedField(
+        many=True,
+        view_name='post-detail',
+        read_only=True
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'url',
+            'id', 
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'date_joined',
+            'posts'
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
 # serializers.py
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -54,12 +84,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         allow_null=True,
         max_length=None  # For long filenames
     )
-
+    
     class Meta:
-        model = User
+        model = Profile
         fields = [
-            'id', 'username', 'email', 
-            'profile_image', 'bio', 'date_joined'
+            'bio', 'profile_image', 'email', 'date_joined'
         ]
         read_only_fields = ['id', 'date_joined']
 
@@ -85,3 +114,9 @@ class PostSerializer(serializers.ModelSerializer):
             'username': obj.author.username,
             'email': obj.author.email
         }
+    
+class PostDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'body', 'author', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'author')
