@@ -59,7 +59,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id', 'title', 'body', 'author', 'author_details', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at', 'author_details')
+        read_only_fields = ('created_at', 'author', 'author_details')
 
     def get_author_details(self, obj):
         """Serialize author data for GET requests."""

@@ -6,7 +6,6 @@ import { getCurrentUser } from '../auth';
 const Profile = () => {
 
     const [user , setUser] = useState( {} );
-
     useEffect(() => {
             const fetchUser = async () => {
               try {
@@ -31,10 +30,12 @@ const Profile = () => {
         name: user.username,
         email: user.email,
         username: user.username,
-        joined: "2023-01-15",
+        joined: user.date_joined,
         postsCount: 27,
-        avatar: "https://via.placeholder.com/150",
+        avatar: "",
     };
+
+    console.log(user);
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
@@ -43,7 +44,7 @@ const Profile = () => {
                 <div className="flex flex-col items-center space-y-4">
                     <div className="relative group">
                         <img 
-                            src={User.avatar} 
+                            src="ProfileDefaultAvatar.jpg" 
                             alt="Profile" 
                             className="w-32 h-32 rounded-full border-4 border-purple-500 dark:border-purple-600"
                         />
@@ -72,7 +73,7 @@ const Profile = () => {
                         <div className="flex items-center space-x-2">
                             <FaCalendar className="text-gray-500 dark:text-gray-300" />
                             <span className="font-medium">Joined:</span>
-                            <span>{new Date(user.joined).toLocaleDateString()}</span>
+                            <span>{User.joined}</span>
                         </div>
                     </div>
                 </div>
@@ -97,7 +98,7 @@ const Profile = () => {
                         
                         <div className="space-y-4">
                             <Link 
-                                to="/my-posts"
+                                to="/profile/my-posts"
                                 className="w-full bg-purple-500 dark:bg-purple-600 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
                             >
                                 <FaNewspaper className="mr-2" />

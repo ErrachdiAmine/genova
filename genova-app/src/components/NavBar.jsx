@@ -42,7 +42,7 @@ const NavBar = () => {
         {/* Centered Navigation Links */}
         <div className="absolute left-1/2 transform -translate-x-1/2 flex gap-8">
           <Link to="/" className="text-gray-300 hover:text-purple-400 transition duration-300">Home</Link>
-          <Link to="/Posts" className="text-gray-300 hover:text-purple-400 transition duration-300">Posts</Link>
+          <Link to="/posts" className="text-gray-300 hover:text-purple-400 transition duration-300">Posts</Link>
         </div>
 
         {/* Profile Icon */}
@@ -63,7 +63,7 @@ const NavBar = () => {
               <ul className="py-2">
                 <li>
                   <Link
-                    to="/Profile"
+                    to="/profile"
                     className='block px-4 py-2 hover:bg-gray-700'
                     onClick={handleLinkClick}
                   >
@@ -72,7 +72,7 @@ const NavBar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/Settings"
+                    to="/settings"
                     className="block px-4 py-2 hover:bg-gray-700"
                     onClick={handleLinkClick} // Close menu after clicking the link
                   >
@@ -81,7 +81,7 @@ const NavBar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/Login"
+                    to="/login"
                     className="block px-4 py-2 hover:bg-gray-700"
                     onClick={handleLinkClick} // Close menu after clicking the link
                   >

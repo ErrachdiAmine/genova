@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import LoadingScreen from '../components/LoginSignupLoading';
+import LoadingScreen from '../components/LoadingScreens/LoginSignupLoading';
 import { registerUser } from '../auth';
 
 const Signup = () => {
@@ -159,7 +159,7 @@ const Signup = () => {
         <div className="mt-6 text-center">
           <p className="text-sm">
             Already have an account?{' '}
-            <Link to="/Login" className="text-blue-500 hover:text-blue-700">
+            <Link to="/login" className="text-blue-500 hover:text-blue-700">
               Login here
             </Link>
           </p>

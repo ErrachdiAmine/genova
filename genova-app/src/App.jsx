@@ -16,13 +16,13 @@ function App() {
 
   const router = createBrowserRouter(createRoutesFromElements(
       <Route path="/" element={<MainLayout/>}>
-        <Route path="/Login" element={<Login/>}/>
-        <Route path="/Register" element={<Signup/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Signup/>}/>
         <Route path="/" element={<Home/>}/>
-        <Route path="/Profile" element={<Profile/>}/>
-        <Route path="/Posts" element={<Posts/>}/>
-        <Route path="/my-posts" element={<ManagePosts/>}/>
-        <Route path="/Settings" element={<Settings/>}/>
+        <Route path="/profile" element={<Profile/>}/>
+        <Route path="/profile/my-posts" element={<ManagePosts/>}/>
+        <Route path="/posts" element={<Posts/>}/>
+        <Route path="/settings" element={<Settings/>}/>
         <Route path="*" element={<NotFound/>}/>
       </Route>
   ))

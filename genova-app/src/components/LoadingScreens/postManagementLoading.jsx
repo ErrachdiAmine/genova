@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const LoadingScreen = () => {
   return (
-    <div className="flex items-center justify-center mt-8">
+    <div className="flex items-center justify-center mt-4">
       <div className="flex space-x-2">
         {[ "#ff3d00", "#ff9100", "#00bfa5" ].map((color, index) => (
           <motion.div

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAccessToken } from '../auth';
 import axios from 'axios';
-import LoadingScreen from '../components/PostsLoading';
+import LoadingScreen from '../components/LoadingScreens/PostsLoading';
 import { FaEllipsisV } from 'react-icons/fa';
 
 
@@ -151,8 +151,12 @@ const Posts = () => {
                   <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
                   <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Posted by <span className="font-medium text-gray-900 dark:text-white">{post.author_details.username}</span> on{' '}
+                    Posted on{' '}
                     {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Updated on{' '}
+                    {new Date(post.updated_at).toLocaleDateString()} {new Date(post.updated_at).toLocaleTimeString()}
                   </p>
                 </div>
               );
