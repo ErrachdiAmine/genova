@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, logoutUser, getCurrentUser, isTokenValid } from '../auth'; // Import all necessary functions
 import { useState, useEffect } from 'react';
-import LoadingScreen from '../components/LoginSignupLoading';
+import LoadingScreen from '../components/LoadingScreens/LoginSignupLoading';
 
 const Login = () => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -121,7 +121,7 @@ const Login = () => {
               
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">Don't have an account?</p>
-                <Link to="/Register" className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                <Link to="/register" className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
                   Sign up
                 </Link>
               </div>

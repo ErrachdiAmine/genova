@@ -25,8 +25,12 @@ def check_login_status(request):
         'is_logged_in': request.user.is_authenticated,
         'username': request.user.username if request.user.is_authenticated else None,
         'email': request.user.email if request.user.is_authenticated else None,
-        'first_name': request.user.first_name if request.user.is_authenticated else None,
-        'last_name': request.user.last_name if request.user.is_authenticated else None
+        'firstname': request.user.first_name if request.user.is_authenticated else None,
+        'lastname': request.user.last_name if request.user.is_authenticated else None,
+        'date_joined': request.user.date_joined.isoformat() if request.user.is_authenticated else None,
+        'is_staff': request.user.is_staff,
+        'is_active': request.user.is_active,
+
     })
 
 class UserView(APIView):

@@ -3,7 +3,7 @@ import axios from "axios";
 import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
 import { Link } from "react-router-dom";
-import LoadingScreen from "../components/postManagementLoading";
+import LoadingScreen from "../components/LoadingScreens/postManagementLoading";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -35,13 +35,12 @@ const ManagePosts = () => {
 
 
     const fetchData = async () => {
+        setLoading (true);
         if (!token || !user ) {
             setLoading(false);
             return;
         }
-
         try {
-            setLoading (true);
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -83,9 +82,10 @@ const ManagePosts = () => {
         }
 
         try {
+            const updatingDate = new Date();
             const response = await axios.put(
                 `https://genova-gsaa.onrender.com/api/posts/${editPost.id}/`,
-                { title: editTitle, body: editBody },
+                { title: editTitle, body: editBody, updated_at: updatingDate},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setPosts(posts.map(post => post.id === editPost.id ? response.data : post));
@@ -117,7 +117,7 @@ const ManagePosts = () => {
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Manage Posts</h1>
 
-                {posts.length === 0 ? (
+                { loading? <LoadingScreen /> : posts.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-gray-600 dark:text-gray-400">No posts found. 
                             <Link 
