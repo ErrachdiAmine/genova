@@ -27,7 +27,7 @@ const Profile = () => {
 
     // Mock user data (replace with real data from your auth system)
     const User = {
-        name: user.username,
+        name: user.firstname,
         email: user.email,
         username: user.username,
         joined: user.date_joined,
