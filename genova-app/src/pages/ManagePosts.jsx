@@ -4,36 +4,73 @@ import { getCurrentUser } from "../auth";
 import { getAccessToken } from "../auth";
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
 import 'react-toastify/dist/ReactToastify.css';
-import PostsManagementLoading from "../components/LoadingScreens/loadingScreenUserPosts";
+
+// Skeleton Component
+const PostCardSkeleton = () => {
+  const isDarkMode = typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark';
+  const bgColor = isDarkMode ? 'bg-gray-800' : 'bg-gray-200';
+  const elementColor = isDarkMode ? 'bg-gray-700' : 'bg-gray-300';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0.6 }}
+      animate={{ opacity: 0.8 }}
+      transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+      className={`${bgColor} rounded-lg shadow-lg p-6 animate-pulse`}
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div className={`h-6 w-3/4 rounded ${elementColor}`}></div>
+        <div className="flex space-x-2">
+          <div className={`w-6 h-6 rounded-full ${elementColor}`}></div>
+          <div className={`w-6 h-6 rounded-full ${elementColor}`}></div>
+        </div>
+      </div>
+      <div className={`h-4 w-full rounded ${elementColor} mb-4`}></div>
+      <div className="border-t pt-4 border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between">
+          <div className={`h-3 w-24 rounded ${elementColor}`}></div>
+          <div className={`h-3 w-32 rounded ${elementColor}`}></div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null); // Initialize as null
+    const [loadingStates, setLoadingStates] = useState({
+        user: true,
+        posts: true
+    });
+    const [user, setUser] = useState(null);
     const token = getAccessToken();
 
+    // Dark mode setup
     useEffect(() => {
         const isDarkMode = localStorage.getItem('theme') === 'dark';
         document.documentElement.classList.toggle('dark', isDarkMode);
     }, []);
 
+    // User data loading
     useEffect(() => {
-        const fetchUser = async () => {
+        const loadUserData = async () => {
             try {
                 const currentUser = await getCurrentUser();
                 setUser(currentUser);
+                setLoadingStates(prev => ({...prev, user: false}));
             } catch (error) {
                 toast.error('Failed to load user data');
-                setLoading(false);
+                setLoadingStates(prev => ({...prev, user: false}));
             }
         };
-        fetchUser();
+        loadUserData();
     }, []);
 
-    const fetchData = async () => {
+    // Posts data loading
+    const fetchPosts = async () => {
         try {
-            setLoading(true);
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -49,17 +86,17 @@ const ManagePosts = () => {
         } catch (error) {
             toast.error('Failed to load posts');
         } finally {
-            setLoading(false);
+            setLoadingStates(prev => ({...prev, posts: false}));
         }
     };
 
     useEffect(() => {
         if (user && token) {
-            fetchData();
+            fetchPosts();
         }
-    }, [token, user]);
-    
-    // Add state for editing
+    }, [user, token]);
+
+    // Edit/Delete states and handlers
     const [editPost, setEditPost] = useState(null);
     const [editTitle, setEditTitle] = useState('');
     const [editBody, setEditBody] = useState('');
@@ -73,7 +110,7 @@ const ManagePosts = () => {
     };
     
     const handleUpdate = async () => {
-        if (editPost.author_details.id !== user.id) {
+        if (!editPost || editPost?.author_details?.id !== user?.id) {
             toast.error('Unauthorized action');
             return;
         }
@@ -108,14 +145,19 @@ const ManagePosts = () => {
             console.error('Error deleting post:', error);
         }
     };
-    
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 pt-16">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Manage Posts</h1>
 
-                {loading ? (
-                    <PostsManagementLoading />
+                {/* Posts Grid */}
+                {loadingStates.posts ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3].map((_, index) => (
+                            <PostCardSkeleton key={index} />
+                        ))}
+                    </div>
                 ) : posts.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-gray-600 dark:text-gray-400">
@@ -180,7 +222,7 @@ const ManagePosts = () => {
                         ))}
                     </div>
                 )}
-    
+
                 {/* Edit Modal */}
                 {editPost && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -214,7 +256,7 @@ const ManagePosts = () => {
                         </div>
                     </div>
                 )}
-    
+
                 {/* Delete Confirmation Modal */}
                 {showDeleteModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -242,6 +284,7 @@ const ManagePosts = () => {
                 )}
             </div>
         </div>
-)};
+    );
+};
 
 export default ManagePosts;
