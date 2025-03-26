@@ -4,7 +4,9 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import User, Post
-from .serializers import UserSerializer, PostSerializer
+from .serializers import UserSerializer, PostSerializer, ProfileSerializer
+from rest_framework.parsers import MultiPartParser, JSONParser
+
 
 
 class UserAccessPermission(permissions.BasePermission):
@@ -27,9 +29,9 @@ def check_login_status(request):
         'email': request.user.email if request.user.is_authenticated else None,
         'firstname': request.user.first_name if request.user.is_authenticated else None,
         'lastname': request.user.last_name if request.user.is_authenticated else None,
-        'date_joined': request.user.date_joined.isoformat() if request.user.is_authenticated else None,
+        'date_joined': request.user.date_joined if request.user.is_authenticated else None,
         'is_staff': request.user.is_staff,
-        'is_active': request.user.is_active,
+        'is_active': request.user.is_active
 
     })
 
@@ -71,7 +73,99 @@ class UserView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+class ProfileView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    parser_classes = [MultiPartParser, JSONParser]  # For file uploads
 
+    def get_user_or_404(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return None
+
+    # GET: Retrieve profile (public or private)
+    def get(self, request, pk=None):
+        try:
+            if pk:
+                user = self.get_user_or_404(pk)
+                if not user:
+                    return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                user = request.user
+
+            serializer = ProfileSerializer(user)
+            return Response(serializer.data)
+            
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # PUT: Full profile update (needs permission check)
+    def put(self, request, pk=None):
+        try:
+            # Determine target user
+            if pk:
+                user = self.get_user_or_404(pk)
+                if not user:
+                    return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+                
+                # Authorization check
+                if not (request.user.is_staff or request.user == user):
+                    return Response({'error': 'Unauthorized update'}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                user = request.user
+
+            serializer = ProfileSerializer(user, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # PATCH: Partial profile update
+    def patch(self, request, pk=None):
+        try:
+            if pk:
+                user = self.get_user_or_404(pk)
+                if not user:
+                    return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+                
+                if not (request.user.is_staff or request.user == user):
+                    return Response({'error': 'Unauthorized update'}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                user = request.user
+
+            serializer = ProfileSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # DELETE: Deactivate profile (soft delete example)
+    def delete(self, request, pk=None):
+        try:
+            if pk and not request.user.is_staff:
+                return Response({'error': 'Admin required'}, status=status.HTTP_403_FORBIDDEN)
+            
+            user = request.user if not pk else self.get_user_or_404(pk)
+            if not user:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Soft delete example
+            user.is_active = False
+            user.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
 class PostsView(APIView):
     authentication_classes = [JWTAuthentication]  # Always process JWT
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsPostAuthor]  # GET=open, others=auth

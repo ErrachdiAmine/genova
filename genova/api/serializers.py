@@ -46,6 +46,23 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+# serializers.py
+
+class ProfileSerializer(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(
+        required=False,
+        allow_null=True,
+        max_length=None  # For long filenames
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 
+            'profile_image', 'bio', 'date_joined'
+        ]
+        read_only_fields = ['id', 'date_joined']
+
 
 class PostSerializer(serializers.ModelSerializer):
     # Auto-set author to the authenticated user (write-only)

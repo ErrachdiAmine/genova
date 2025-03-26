@@ -44,7 +44,7 @@ const Profile = () => {
                 <div className="flex flex-col items-center space-y-4">
                     <div className="relative group">
                         <img 
-                            src="ProfileDefaultAvatar.jpg" 
+                            src={User.avatar} 
                             alt="Profile" 
                             className="w-32 h-32 rounded-full border-4 border-purple-500 dark:border-purple-600"
                         />
@@ -73,7 +73,7 @@ const Profile = () => {
                         <div className="flex items-center space-x-2">
                             <FaCalendar className="text-gray-500 dark:text-gray-300" />
                             <span className="font-medium">Joined:</span>
-                            <span>{User.joined}</span>
+                            <span>{new Date(User.joined).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
                         </div>
                     </div>
                 </div>

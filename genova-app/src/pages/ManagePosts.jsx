@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // Inside the component
 const ManagePosts = () => {
     const [posts, setPosts] = useState([]);
+    const [unsortedPosts, setUnsortedPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user , setUser] = useState(null);
     const token = getAccessToken();
@@ -40,6 +41,7 @@ const ManagePosts = () => {
             setLoading(false);
             return;
         }
+
         try {
             const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
                 headers: { Authorization: `Bearer ${token}` }
@@ -48,9 +50,12 @@ const ManagePosts = () => {
             const userPosts = Array.isArray(response.data) 
                 ? response.data.filter(post => 
                     post.author_details?.id === user.id
-                ) 
-                : [];
+            ).sort(
+                (a, b) => new Date(b.created_at) - new Date(a.created_at)
+            ) : [];
+
             setPosts(userPosts);
+
         } catch (error) {
             toast.error('Failed to load posts');
         } finally {
