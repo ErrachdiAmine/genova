@@ -2,6 +2,7 @@ from rest_framework import serializers
 from core.models import *
 
 class UserSerializer(serializers.ModelSerializer):
+    version = serializers.IntegerField(required=False)  # Add version field for optimistic locking
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'username', 'email', 'password')
@@ -32,6 +33,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     def update(self, instance, validated_data):
+        # Check for version conflict
+        if 'version' in validated_data and validated_data['version'] != instance.version:
+            raise serializers.ValidationError("Version conflict. The object has been modified by another process.")
         # Update other fields
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)

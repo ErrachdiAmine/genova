@@ -11,5 +11,5 @@ urlpatterns = [
   path('posts/', PostsView.as_view(), name='posts'),
   path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
   path('posts/my-posts/', Myposts.as_view(), name='my-posts'),
-  path('check_login_status/', check_login_status, name='check_login_status'),
+  path('check-login-status/', check_login_status, name='check-login-status'),
 ]

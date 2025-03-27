@@ -76,8 +76,7 @@ const Posts = () => {
     }
 
     try {
-      await axios.post(22
-        
+      await axios.post(
         `${API_URL}/api/posts/`,
         { title: postTitle, body: postBody },
         { headers: { Authorization: `Bearer ${token}` } }

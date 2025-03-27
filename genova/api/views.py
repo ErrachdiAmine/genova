@@ -20,6 +20,7 @@ class IsPostAuthor(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.author == request.user
 
+@api_view (['GET'])
 def check_login_status(request):
     """Endpoint to check if the user is logged in (works consistently across views)."""
     return Response({
@@ -55,6 +56,11 @@ class UserView(APIView):
 
     # --- PUT: Update user (requires auth) ---
     def put(self, request, pk=None):
+        # Check for version conflict
+        version = request.data.get('version')
+        user = User.objects.get(pk=pk)
+        if version and version != user.version:
+            return Response({'error': 'Version conflict. The object has been modified by another process.'}, status=status.HTTP_409_CONFLICT)
         try:
             user = User.objects.get(pk=pk)
             serializer = UserSerializer(user, data=request.data)
@@ -65,8 +71,14 @@ class UserView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        # Update the version
+        user.version += 1
+
     # --- DELETE: Delete user (requires auth) ---
     def delete(self, request, pk=None):
+        user = User.objects.get(pk=pk)
+        if not user:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
             user = User.objects.get(pk=pk)
             user.delete()
@@ -215,6 +227,9 @@ class PostsView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Post.DoesNotExist:
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the version
+        post.version += 1
 
     # --- DELETE: Delete post (requires auth) ---
     def delete(self, request, pk=None):
