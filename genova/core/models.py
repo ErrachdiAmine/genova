@@ -13,7 +13,6 @@ class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     password = models.CharField(max_length=255)  
-    version = models.IntegerField(default=1)  # Add version field for optimistic locking
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

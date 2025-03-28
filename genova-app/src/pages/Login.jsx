@@ -1,10 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser, logoutUser, getCurrentUser, isTokenValid } from '../auth'; // Import all necessary functions
+import { loginUser, logoutUser, isTokenValid } from '../auth'; // Import all necessary functions
+import { getCurrentUser } from '../auth';
 import { useState, useEffect } from 'react';
 import LoadingScreen from '../components/LoadingScreens/LoginSignupLoading';
 
 const Login = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [User, setUser] = useState('');
   const [username, setUsername] = useState('');
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [password, setPassword] = useState('');
@@ -40,7 +41,7 @@ const Login = () => {
       try {
         const user = await getCurrentUser();
         if (user) {
-          setCurrentUser(user.username);
+          setUser(user.username);
         }
       } catch (error) {
         console.log(error);
@@ -53,7 +54,7 @@ const Login = () => {
 
   const logout = () => {
     logoutUser(); // Use the logoutUser function
-    setCurrentUser(null);
+    setUser(null);
     setIsLoadingUser(false); // Reset loading state on logout
   };
 
@@ -66,9 +67,9 @@ const Login = () => {
       <div className="bg-white dark:bg-gray-800 p-10 rounded-lg shadow-lg w-full max-w-md">
         {isLoadingUser ? (
           <div><LoadingScreen /></div>
-        ) : currentUser ? (
+        ) : User ? (
           <>
-            <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-6">{currentUser}</h2>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-6">{User}</h2>
             <button
               onClick={logout}
               className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 dark:hover:bg-red-500 transition duration-300"
