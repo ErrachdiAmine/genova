@@ -116,11 +116,11 @@ const ManagePosts = () => {
         }
 
         try {
-            const updatingDate = new Date();
             const response = await axios.put(
-                `https://genova-gsaa.onrender.com/api/posts/${editPost.id}/`,
-                { title: editTitle, body: editBody, updated_at: updatingDate},
-                { headers: { Authorization: `Bearer ${token}` } }
+                `https://genova-gsaa.onrender.com/api/posts/my-posts/${editPost.id}/`,
+                { title: editTitle, body: editBody },
+                { headers: { Authorization: `Bearer ${token}` } }, 
+
             );
             setPosts(posts.map(post => post.id === editPost.id ? response.data : post));
             setEditPost(null);
@@ -134,7 +134,7 @@ const ManagePosts = () => {
     const handleDelete = async (postId) => {
         try {
             await axios.delete(
-                `https://genova-gsaa.onrender.com/api/posts/${postId}/`,
+                `https://genova-gsaa.onrender.com/api/posts/my-posts/${postId}/`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setPosts(posts.filter(post => post.id !== postId));

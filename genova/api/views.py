@@ -1,8 +1,7 @@
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import User, Post
 from .serializers import UserSerializer, UserDetailSerializer, PostSerializer, ProfileSerializer
@@ -10,8 +9,6 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 # Fixed check_login_status view
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])  # Add JWT authentication
-@permission_classes([permissions.AllowAny])    # Allow both authenticated and anonymous access
 def check_login_status(request):
     """Endpoint to check if the user is logged in"""
     user = request.user
@@ -72,11 +69,40 @@ class UserView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-class UserDetailView(RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserDetailSerializer
-    lookup_field = 'id'
-    lookup_url_kwarg = 'user_id'
+class UserDetailView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request, pk=None):
+        try:
+            user = User.objects.get(pk=pk)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    
+    def put(self, request, pk=None):
+        try:
+            user = User.objects.get(pk=pk)
+            serializer = UserSerializer(user, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+    def delete(self, request, pk=None):
+        try:
+            user = User.objects.get(pk=pk)
+            user.delete()
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
 
 class ProfileView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -203,6 +229,15 @@ class PostDetailView(APIView):
             return Response(serializer.data)
         except Post.DoesNotExist:
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete (self, request, pk=None):
+        try:
+            post = Post.objects.get(pk=pk)
+            post.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Post.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        
 
 class Myposts(APIView):
     authentication_classes = [JWTAuthentication]
