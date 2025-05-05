@@ -116,6 +116,7 @@ const ManagePosts = () => {
         }
 
         try {
+            console.log('Updating post:', editPost.id);
             const response = await axios.put(
                 `https://genova-gsaa.onrender.com/api/posts/my-posts/${editPost.id}/`,
                 { title: editTitle, body: editBody },

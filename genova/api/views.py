@@ -229,6 +229,25 @@ class PostDetailView(APIView):
             return Response(serializer.data)
         except Post.DoesNotExist:
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def put(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+            self.check_object_permissions(request, post)
+            
+            serializer = PostSerializer(
+                post,
+                data=request.data,
+                context={'request': request}
+            )
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Post.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
         
     def delete (self, request, pk=None):
         try:
