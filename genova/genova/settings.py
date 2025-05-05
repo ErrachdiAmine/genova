@@ -1,6 +1,8 @@
 from datetime import timedelta
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
@@ -154,11 +156,11 @@ WSGI_APPLICATION = 'genova.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'NAME': os.getenv('DB_NAME', default='genova'),
+        'USER': os.getenv('DB_USER', default='root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', default=''),
         'HOST': os.getenv('DB_HOST'),  # Ensure this is correct
-        'PORT': os.getenv('DB_PORT'),
+        'PORT': os.getenv('DB_PORT', default='3306'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
