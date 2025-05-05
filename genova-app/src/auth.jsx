@@ -66,7 +66,7 @@ export const registerUser = async (firstname, lastname, email, username, passwor
     last_name: lastname,
     email,
     username,
-    password,
+    password, 
   });
   return response.data;
 };
