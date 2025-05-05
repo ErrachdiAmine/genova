@@ -33,6 +33,7 @@ const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
@@ -90,6 +91,20 @@ const Posts = () => {
       console.error('Error posting:', error);
     }
   };
+
+  useEffect(() => {
+    const loadUserData = async () => {
+        try {
+            const currentUser = await getCurrentUser();
+            setUser(currentUser);
+            setLoadingStates(prev => ({...prev, user: false}));
+        } catch (error) {
+            toast.error('Failed to load user data');
+            setLoadingStates(prev => ({...prev, user: false}));
+        }
+    };
+    loadUserData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
@@ -171,13 +186,12 @@ const Posts = () => {
 
                 <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
                 <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">  
+                  {post.author_details?.username || 'Unknown'}
+                </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Posted on{' '}
                   {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Updated on{' '}
-                  {new Date(post.updated_at).toLocaleDateString()} {new Date(post.updated_at).toLocaleTimeString()}
                 </p>
               </div>
             ))
