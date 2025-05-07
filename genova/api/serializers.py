@@ -79,18 +79,17 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
 # serializers.py
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     profile_image = serializers.ImageField(
         required=False,
         allow_null=True,
-        max_length=None  # For long filenames
+        max_length=None
     )
-    
+
     class Meta:
         model = Profile
-        fields = [
-            'id', 'bio', 'profile_image',
-        ]
-        read_only_fields = ['id']
+        fields = ['id', 'user', 'bio', 'profile_image', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at']
 
 class PostSerializer(serializers.ModelSerializer):
     # Auto-set author to the authenticated user (write-only)

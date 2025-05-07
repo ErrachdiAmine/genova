@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from core.models import User, Post
+from core.models import Profile, User, Post
 from .serializers import UserSerializer, UserDetailSerializer, PostSerializer, ProfileSerializer
 from rest_framework.parsers import MultiPartParser, JSONParser
 
@@ -100,76 +100,29 @@ class UserDetailView(APIView):
             user.delete()
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-
-
 
 class ProfileView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    parser_classes = [MultiPartParser, JSONParser]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get_user_or_404(self, pk):
+    def get(self, request):
         try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            return None
-
-    def get(self, request, pk=None):
-        try:
-            user = self.get_user_or_404(pk) if pk else request.user
-            if not user:
-                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-            serializer = ProfileSerializer(user)
+            profile = request.user.profile
+            serializer = ProfileSerializer(profile)
             return Response(serializer.data)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, pk=None):
-        return self.update_profile(request, pk, partial=False)
-
-    def patch(self, request, pk=None):
-        return self.update_profile(request, pk, partial=True)
-
-    def update_profile(self, request, pk=None, partial=False):
+    def put(self, request):
         try:
-            user = self.get_user_or_404(pk) if pk else request.user
-            if not user:
-                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-            if not (request.user.is_staff or request.user == user):
-                return Response({'error': 'Unauthorized update'}, status=status.HTTP_403_FORBIDDEN)
-
-            serializer = ProfileSerializer(
-                user, 
-                data=request.data, 
-                partial=partial
-            )
-            
+            profile = request.user.profile
+            serializer = ProfileSerializer(profile, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def delete(self, request, pk=None):
-        try:
-            if pk and not request.user.is_staff:
-                return Response({'error': 'Admin required'}, status=status.HTTP_403_FORBIDDEN)
-
-            user = self.get_user_or_404(pk) if pk else request.user
-            if not user:
-                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-            user.is_active = False
-            user.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-            
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class PostsView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -256,7 +209,6 @@ class PostDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Post.DoesNotExist:
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
-        
 
 class Myposts(APIView):
     authentication_classes = [JWTAuthentication]
