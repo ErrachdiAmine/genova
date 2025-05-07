@@ -4,8 +4,7 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from core.models import Profile, User, Post
-from .serializers import UserSerializer, UserDetailSerializer, PostSerializer, ProfileSerializer
-from rest_framework.parsers import MultiPartParser, JSONParser
+from .serializers import UserSerializer, PostSerializer, ProfileSerializer
 
 # Fixed check_login_status view
 @api_view(['GET'])
@@ -103,19 +102,25 @@ class UserDetailView(APIView):
 
 class ProfileView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def get(self, request):
+    def get(self, request, pk=None):
         try:
-            profile = request.user.profile
+            if pk:
+                profile = Profile.objects.get(user__id=pk)
+            else:
+                profile = request.user.profile
             serializer = ProfileSerializer(profile)
             return Response(serializer.data)
         except Profile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request):
+    def put(self, request, pk=None):
         try:
-            profile = request.user.profile
+            if pk:
+                profile = Profile.objects.get(user__id=pk)
+            else:
+                profile = request.user.profile
             serializer = ProfileSerializer(profile, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
