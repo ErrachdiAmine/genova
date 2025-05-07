@@ -5,7 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    sourcemap: true, // Enable source maps
+    target: 'esnext', // Use the latest JavaScript features
+    sourcemap: false, // Enable source maps
+  },
+  define: {
+    'import.meta.env.PROD': mode === 'production',
+    'import.meta.env.VERCEL': JSON.stringify(process.env.VERCEL || false)
   },
   server: {
     port: 5173,

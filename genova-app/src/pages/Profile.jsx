@@ -3,6 +3,7 @@ import { FaEdit, FaUser, FaEnvelope, FaCalendar, FaNewspaper } from 'react-icons
 import { useState, useEffect, useRef } from 'react';
 import { getCurrentUser } from '../auth';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 // Skeleton Loader Components
 const BlockSkeleton = ({ children }) => (
@@ -77,15 +78,27 @@ const AccountSettingsSkeleton = () => (
 );
 
 const Profile = () => {
+
+
+  useEffect(() => {
+    const isDarkMode = localStorage.getItem('theme') === 'dark';
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, []);
+
+
   const [loadingStates, setLoadingStates] = useState({
     header: true,
     info: true,
     posts: true,
     settings: true
   });
+
   const [user, setUser] = useState(null);
   const [avatar, setAvatar] = useState(null);
+  const [currentAvatar, setCurrentAvatar] = useState(null);
   const fileInputRef = useRef(null);
+  const API_URL = import.meta.env.VITE_API_URL;
+  const access = localStorage.getItem('access_token');
 
   const handleAvatarUpload = (e) => {
     const file = e.target.files?.[0];
@@ -98,10 +111,38 @@ const Profile = () => {
     }
   };
 
+  const handleAvatarUpdate = async () => {
+    if (avatar) {
+      try {
+        const formData = new FormData();
+        formData.append('profile_image', fileInputRef.current.files[0]);
+
+        const response = await axios.patch(`${API_URL}/api/users/${user.id}/profile/`, formData, {
+          headers: {
+            'Authorization': `Bearer ${access}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        return response.data;
+      } catch (error) {
+        console.error('Error uploading avatar:', error);
+      }
+    }
+  };
+
   useEffect(() => {
-    const isDarkMode = localStorage.getItem('theme') === 'dark';
-    document.documentElement.classList.toggle('dark', isDarkMode);
-  }, []);
+    const updateAvatar = async () => {
+      if (avatar) {
+        const updatedAvatar = await handleAvatarUpdate();
+        setCurrentAvatar(updatedAvatar.profile_image);
+        setAvatar(null);
+      }
+    };
+    updateAvatar();
+  }, [avatar]);
+
+  
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -120,6 +161,26 @@ const Profile = () => {
     loadUserData();
   }, []);
 
+
+  const fetshUserProfile = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/users/${user.id}/profile`, {
+        headers: { 'Authorization': `Bearer ${access}` }
+      });
+      const userProfile = response.data;
+      setCurrentAvatar(userProfile.profile_image);
+      console.log(userProfile.profile_image);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      fetshUserProfile();
+    }
+  } , [user]);
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-20">
       <div className="w-full max-w-4xl space-y-8">
@@ -128,7 +189,7 @@ const Profile = () => {
           <div className="flex flex-col items-center space-y-4">
             <div className="relative group">
               <img 
-                src={avatar || user.avatar} 
+                src={currentAvatar} 
                 className="w-32 h-32 rounded-full border-4 border-purple-500 dark:border-purple-600 object-cover"
               />
               <label 
