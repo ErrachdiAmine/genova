@@ -128,6 +128,21 @@ class ProfileView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Profile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def patch(self, request, pk=None):
+        try:
+            if pk:
+                profile = Profile.objects.get(user__id=pk)
+            else:
+                profile = request.user.profile
+            serializer = ProfileSerializer(profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+            
 
 class PostsView(APIView):
     authentication_classes = [JWTAuthentication]
