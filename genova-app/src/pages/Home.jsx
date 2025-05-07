@@ -12,6 +12,7 @@ const Home = () => {
     }
   }, []);
 
+
   return (
     <div className="flex flex-col gap-5 items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 pt-16">
       <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg m-4 shadow-xl">

@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -33,8 +35,13 @@ class User(AbstractUser):
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
-    profile_image = models.ImageField(upload_to='profile_pics/', default= 'ProfileDefaultAvatar.jpg')
-
+    image = CloudinaryField(
+        'image',
+        default='default.jpg',
+        blank=True,
+        null=True 
+    )
+    created_at = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"{ self.user.username } Profile"
     

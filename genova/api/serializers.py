@@ -88,10 +88,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'bio', 'profile_image', 'email', 'date_joined'
+            'id', 'bio', 'profile_image',
         ]
-        read_only_fields = ['id', 'date_joined']
-
+        read_only_fields = ['id']
 
 class PostSerializer(serializers.ModelSerializer):
     # Auto-set author to the authenticated user (write-only)

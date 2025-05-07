@@ -120,7 +120,7 @@ class ProfileView(APIView):
             user = self.get_user_or_404(pk) if pk else request.user
             if not user:
                 return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-                
+
             serializer = ProfileSerializer(user)
             return Response(serializer.data)
         except Exception as e:

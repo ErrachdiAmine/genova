@@ -3,6 +3,9 @@ import { getAccessToken } from '../auth';
 import axios from 'axios';
 import { FaEllipsisV } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import {Link} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 const PostSkeleton = () => {
   const isDarkMode = typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark';
@@ -37,6 +40,7 @@ const Posts = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
+  const dropdownRef = useRef(null);
   const API_URL = "https://genova-gsaa.onrender.com";
 
   useEffect(() => {
@@ -63,7 +67,7 @@ const Posts = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
+  
   const toggleDropdown = (postId) => {
     setShowDropdown(showDropdown === postId ? null : postId);
   };
@@ -92,6 +96,7 @@ const Posts = () => {
     }
   };
 
+  
   useEffect(() => {
     const loadUserData = async () => {
         try {
@@ -176,9 +181,11 @@ const Posts = () => {
                     </button>
                     {showDropdown === post.id && (
                       <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
-                        <button className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'>
-                          View
-                        </button>
+                        <Link to="/profile/my-posts">
+                          <button className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'>
+                              Edit
+                          </button>
+                        </Link>
                       </div>
                     )}
                   </div>

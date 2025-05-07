@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; // Change to named import for JWT decoding
 
-const API_URL = 'https://genova-gsaa.onrender.com'; // Your Django API URL
+const API_URL = import.meta.env.VITE_API_URL; // Your Django API URL
 
 export const getAccessToken = () => {
   return localStorage.getItem('access_token');

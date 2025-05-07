@@ -46,6 +46,8 @@ const ManagePosts = () => {
     });
     const [user, setUser] = useState(null);
     const token = getAccessToken();
+    const API_URL = import.meta.env.VITE_API_URL;
+
 
     // Dark mode setup
     useEffect(() => {
@@ -71,7 +73,7 @@ const ManagePosts = () => {
     // Posts data loading
     const fetchPosts = async () => {
         try {
-            const response = await axios.get('https://genova-gsaa.onrender.com/api/posts/my-posts/', {
+            const response = await axios.get(`${API_URL}/api/posts/my-posts/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -118,7 +120,7 @@ const ManagePosts = () => {
         try {
             console.log('Updating post:', editPost.id);
             const response = await axios.put(
-                `https://genova-gsaa.onrender.com/api/posts/my-posts/${editPost.id}/`,
+                `${API_URL}/api/posts/my-posts/${editPost.id}/`,
                 { title: editTitle, body: editBody },
                 { headers: { Authorization: `Bearer ${token}` } }, 
 
@@ -135,7 +137,7 @@ const ManagePosts = () => {
     const handleDelete = async (postId) => {
         try {
             await axios.delete(
-                `https://genova-gsaa.onrender.com/api/posts/my-posts/${postId}/`,
+                `${API_URL}/api/posts/my-posts/${postId}/`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setPosts(posts.filter(post => post.id !== postId));
