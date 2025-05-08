@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import get_object_or_404
 from core.models import Profile, User, Post, Comment
+from django.db.models import Count
 from .serializers import UserSerializer, PostSerializer, ProfileSerializer, CommentSerializer
 
 # Fixed check_login_status view
@@ -150,7 +151,7 @@ class PostsView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsPostAuthor]
 
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.all().annotate(comment_count=Count('post_comments'))
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)    
 
