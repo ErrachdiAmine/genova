@@ -72,6 +72,13 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Comment(models.Model):
+    post = models.ForeignKey( 
+        Post,
+        related_name='comments',
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='comments',

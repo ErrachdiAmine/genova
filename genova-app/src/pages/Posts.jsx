@@ -103,6 +103,8 @@ const Posts = () => {
         { body: newComment },
         { headers: { Authorization: `Bearer ${access}` } }
       );
+      console.log(newComment),
+
       setNewComment('');
       await fetchComments(postId);
     } catch (error) {

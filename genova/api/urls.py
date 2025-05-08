@@ -1,8 +1,5 @@
 from django.urls import path
-from .views import UserView, UserDetailView, PostsView, PostDetailView, check_login_status, Myposts, ProfileView
-
-
-app_name = 'api'
+from .views import UserView, UserDetailView, PostsView, PostDetailView, check_login_status, Myposts, ProfileView, CommentListCreateView, CommentDetailView
 
 urlpatterns = [
   path('users/', UserView.as_view(), name='users'),
@@ -12,7 +9,8 @@ urlpatterns = [
   path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
   path('posts/<int:pk>/like/', PostDetailView.as_view(), name='like-post'),
   path('posts/<int:pk>/unlike/', PostDetailView.as_view(), name='unlike-post'),
-  path('posts/<int:pk>/comment/', PostDetailView.as_view(), name='comment-post'),
+  path('posts/comments/<int:pk>/', CommentDetailView.as_view(), name='comment-detail'),
+  path('posts/<int:post_id>/comments/', CommentListCreateView.as_view(), name='comment-list-post'),
   path('posts/my-posts/', Myposts.as_view(), name='my-posts'),
   path('posts/my-posts/<int:pk>/', PostDetailView.as_view(), name='user-post-detail'),
   path('check-login-status/', check_login_status, name='check-login-status'),

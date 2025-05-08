@@ -112,18 +112,44 @@ class PostSerializer(serializers.ModelSerializer):
             'username': obj.author.username,
             'email': obj.author.email
         }
-    
 class CommentSerializer(serializers.ModelSerializer):
-    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
-    author = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    author = serializers.SerializerMethodField()
+    children_count = serializers.IntegerField(read_only=True)
+    likes_count = serializers.IntegerField(read_only=True)
+    liked_by_user = serializers.SerializerMethodField()
+    can_edit = serializers.SerializerMethodField()
+    can_delete = serializers.SerializerMethodField()
+    can_reply = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ('id', 'post', 'author', 'content', 'created_at')
-        read_only_fields = ('created_at', 'author')
-   
+        fields = [
+            'id', 'body', 'created_at', 'updated_at',
+            'author', 'parent', 'children_count',
+            'likes_count', 'liked_by_user',
+            'can_edit', 'can_delete', 'can_reply'
+        ]
+
+    def get_author(self, obj):
+        return {
+            'id': obj.author.id,
+            'username': obj.author.username,
+            'profile_image_url': obj.author.profile.profile_image.url
+        }
+
+    def get_liked_by_user(self, obj):
+        user = self.context['request'].user
+        return obj.is_liked_by(user) if user.is_authenticated else False
+
+    def get_can_edit(self, obj):
+        return obj.can_edit(self.context['request'].user)
+
+    def get_can_delete(self, obj):
+        return obj.can_delete(self.context['request'].user)
+
+    def get_can_reply(self, obj):
+        return obj.can_reply(self.context['request'].user)
+
       
 class PostDetailSerializer(serializers.ModelSerializer):
     class Meta:
