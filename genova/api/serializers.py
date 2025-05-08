@@ -113,6 +113,18 @@ class PostSerializer(serializers.ModelSerializer):
             'email': obj.author.email
         }
     
+class CommentSerializer(serializers.ModelSerializer):
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'post', 'author', 'content', 'created_at')
+        read_only_fields = ('created_at', 'author')
+   
+      
 class PostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post

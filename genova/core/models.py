@@ -69,3 +69,55 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='comments',
+        on_delete=models.CASCADE
+    )
+    body = models.TextField()
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='children',
+        on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='liked_comments',
+        blank=True
+    )
+
+    class Meta:
+        ordering = ['created_at']
+
+    @property
+    def children_count(self):
+        # Number of direct replies
+        return self.children.count()
+
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
+    def is_liked_by(self, user):
+        # Whether the given user has liked this comment
+        return self.likes.filter(pk=user.pk).exists()
+
+    def can_edit(self, user):
+        # Simple rule: only the author may edit
+        return user.is_authenticated and user == self.author
+
+    def can_delete(self, user):
+        # Example: authors or staff can delete
+        return user.is_authenticated and (user == self.author or user.is_staff)
+
+    def can_reply(self, user):
+        # Everyone who’s authenticated can reply
+        return user.is_authenticated
+

@@ -1,35 +1,47 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getAccessToken, getCurrentUser } from '../auth';
 import axios from 'axios';
-import { FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV, FaComment, FaPaperPlane } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const PostSkeleton = () => {
-  const isDarkMode = typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark';
-  const bgColor = isDarkMode ? 'bg-gray-800' : 'bg-white';
-  const elementColor = isDarkMode ? 'bg-gray-700' : 'bg-gray-200';
+const PostSkeleton = () => (
+  <motion.div
+    initial={{ opacity: 0.6 }}
+    animate={{ opacity: 0.8 }}
+    transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+    className="relative bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 mb-4 animate-pulse"
+  >
+    <div className="absolute top-4 right-4">
+      <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+    </div>
+    <div className="h-6 w-3/4 mb-4 rounded bg-gray-200 dark:bg-gray-700"></div>
+    <div className="h-4 w-full mb-4 rounded bg-gray-200 dark:bg-gray-700"></div>
+    <div className="h-4 w-2/3 mb-4 rounded bg-gray-200 dark:bg-gray-700"></div>
+    <div className="h-3 w-1/2 rounded bg-gray-200 dark:bg-gray-700"></div>
+  </motion.div>
+);
 
-  return (
-    <motion.div
-      initial={{ opacity: 0.6 }}
-      animate={{ opacity: 0.8 }}
-      transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-      className={`${bgColor} shadow-lg rounded-lg p-6 border ${
-        isDarkMode ? 'border-gray-700' : 'border-gray-300'
-      } mb-4 animate-pulse`}
-    >
-      <div className="absolute top-4 right-4">
-        <div className={`w-6 h-6 rounded-full ${elementColor}`}></div>
-      </div>
-      <div className={`h-6 w-3/4 mb-4 rounded ${elementColor}`}></div>
-      <div className={`h-4 w-full mb-4 rounded ${elementColor}`}></div>
-      <div className={`h-4 w-2/3 mb-4 rounded ${elementColor}`}></div>
-      <div className={`h-3 w-1/2 rounded ${elementColor}`}></div>
-    </motion.div>
-  );
-};
+const Comment = ({ comment, authorAvatars }) => (
+  <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+    <img
+      src={authorAvatars[comment.author] || '/ProfileDefaultAvatar.jpg'}
+      alt="Commenter"
+      className="w-6 h-6 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+    />
+    <div className="flex-1">
+      <p className="text-sm text-gray-600 dark:text-gray-300">
+        <span className="font-medium">{comment.author_details?.username || 'Anonymous'}</span>
+        <span className="ml-2">{comment.body}</span>
+      </p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        {new Date(comment.created_at).toLocaleDateString()}
+      </p>
+    </div>
+  </div>
+);
+
 
 const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
@@ -39,6 +51,10 @@ const Posts = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
+  const [comments, setComments] = useState({});
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [newComment, setNewComment] = useState('');
+  
   const API_URL = "https://genova-gsaa.onrender.com";
   const access = getAccessToken();
 
@@ -48,90 +64,71 @@ const Posts = () => {
   }, []);
 
   const fetchAuthorProfile = useCallback(async (authorId) => {
-    if (!authorId) return;
-    if (authorAvatars[authorId]) return; // Already fetched
-
+    if (!authorId || authorAvatars[authorId]) return;
     try {
-      const response = await axios.get(`${API_URL}/api/users/${authorId}/profile`, {
-        headers: { 'Authorization': `Bearer ${access}` }
-      });
+      const response = await axios.get(`${API_URL}/api/users/${authorId}/profile`);
       setAuthorAvatars(prev => ({ ...prev, [authorId]: response.data.profile_image }));
     } catch (error) {
-      console.error(`Error fetching profile for author ${authorId}:`, error);
       setAuthorAvatars(prev => ({ ...prev, [authorId]: '/ProfileDefaultAvatar.jpg' }));
     }
-  }, [API_URL, access, authorAvatars]);
+  }, [API_URL, authorAvatars]);
 
   const fetchData = useCallback(async () => {
     try {
       const { data } = await axios.get(`${API_URL}/api/posts/`);
-      const sortedPosts = data.sort((a, b) => 
-        new Date(b.created_at) - new Date(a.created_at)
-      );
+      const sortedPosts = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       setPosts(sortedPosts);
-
-      // Fetch author profiles for all posts
-      const uniqueAuthorIds = [...new Set(sortedPosts.map(post => post.author_details?.id).filter(Boolean))];
-      uniqueAuthorIds.forEach(authorId => {
-        fetchAuthorProfile(authorId);
-      });
+      sortedPosts.forEach(post => fetchAuthorProfile(post.author_details?.id));
     } catch (error) {
       toast.error('Failed to load posts.');
-      console.error('Error fetching posts:', error);
     } finally {
       setLoading(false);
     }
   }, [API_URL, fetchAuthorProfile]);
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        if (currentUser) {
-          setUser(currentUser);
-        }
-      } catch (error) {
-        toast.error('Failed to load user data');
-      }
-    };
-    loadUserData();
-  }, []);
+  const fetchComments = useCallback(async (postId) => {
+    try {
+      const { data } = await axios.get(`${API_URL}/api/posts/${postId}/comments/`);
+      setComments(prev => ({ ...prev, [postId]: data }));
+    } catch (error) {
+      toast.error('Failed to load comments');
+    }
+  }, [API_URL]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const handleCommentSubmit = useCallback(async (postId) => {
+    if (!newComment.trim()) return;
+    try {
+      await axios.post(
+        `${API_URL}/api/posts/${postId}/comments/`,
+        { body: newComment },
+        { headers: { Authorization: `Bearer ${access}` } }
+      );
+      setNewComment('');
+      await fetchComments(postId);
+    } catch (error) {
+      toast.error('Failed to post comment');
+    }
+  }, [API_URL, access, newComment, fetchComments]);
 
   const toggleDropdown = useCallback((postId) => {
     setShowDropdown(prev => prev === postId ? null : postId);
   }, []);
 
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (!access) {
-      toast.error('You must be logged in to perform this action.');
-      return;
-    }
-
-    try {
-      await axios.post(
-        `${API_URL}/api/posts/`,
-        { title: postTitle, body: postBody },
-        { headers: { Authorization: `Bearer ${access}` } }
-      );
-      toast.success('Post created successfully!');
-      setPostTitle('');
-      setPostBody('');
-      setShowForm(false);
-      await fetchData();
-    } catch (error) {
-      toast.error('Failed to create post');
-      console.error('Error posting:', error);
-    }
-  }, [access, postTitle, postBody, API_URL, fetchData]);
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        await getCurrentUser();
+        fetchData();
+      } catch (error) {
+        toast.error('Failed to load user data');
+      }
+    };
+    loadUserData();
+  }, [fetchData]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
-      <h1 className="text-4xl text-center font-bold mb-8">Posts</h1>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center px-4 sm:px-6 lg:px-8 pt-16">
+      <h1 className="text-3xl sm:text-4xl text-center font-bold mb-8">Posts</h1>
 
       <div className="w-full max-w-3xl space-y-8">
         {!showForm && access && (
@@ -144,91 +141,131 @@ const Posts = () => {
         )}
 
         {showForm && (
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+          <form onSubmit={e => e.preventDefault()} className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Create a Post</h2>
             <input
               type="text"
               value={postTitle}
-              onChange={(e) => setPostTitle(e.target.value)}
-              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onChange={e => setPostTitle(e.target.value)}
               placeholder="Title"
               required
+              className="w-full p-3 mb-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
             <textarea
-              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="What's on your mind?"
-              value={postBody}
-              onChange={(e) => setPostBody(e.target.value)}
               rows="4"
+              value={postBody}
+              onChange={e => setPostBody(e.target.value)}
+              placeholder="What's on your mind?"
               required
+              className="w-full p-3 mb-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
-            <div className="flex justify-between">
-              <button
-                type="submit"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
-              >
-                Create Post
-              </button>
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition duration-200"
               >
-                Cancel 
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCommentSubmit(selectedPostId)}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+              >
+                Post
               </button>
             </div>
           </form>
         )}
 
         <div className="space-y-6">
-          {loading ? (
-            [1, 2, 3].map((_, index) => <PostSkeleton key={index} />)
-          ) : (
-            posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative"
-              >
-                {access && (
-                  <div className="absolute top-4 right-4">
-                    <button
-                      onClick={() => toggleDropdown(post.id)}
-                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
-                    >
-                      <FaEllipsisV className="text-gray-600 dark:text-gray-400" />
-                    </button>
-                    {showDropdown === post.id && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
-                        <Link to="/profile/my-posts">
-                          <button className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'>
+          {loading
+            ? [1, 2, 3].map((_, i) => <PostSkeleton key={i} />)
+            : posts.map(post => (
+                <div
+                  key={post.id}
+                  className="flex flex-col md:flex-row gap-6"
+                >
+                  {/* Main post card */}
+                  <div className="flex-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative">
+                    <div className="absolute top-4 right-4">
+                      <button
+                        onClick={() => toggleDropdown(post.id)}
+                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                      >
+                        <FaEllipsisV className="text-gray-600 dark:text-gray-400" />
+                      </button>
+                      {showDropdown === post.id && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
+                          <Link to="/profile/my-posts">
+                            <button className='block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'>
                               Edit
-                          </button>
-                        </Link>
-                      </div>
-                    )}
+                            </button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center space-x-2 mb-4">
+                      <img
+                        src={authorAvatars[post.author_details?.id] || '/ProfileDefaultAvatar.jpg'}
+                        alt="Author Profile"
+                        className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                      />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {post.author_details?.username || 'Unknown'}
+                      </span>
+                    </div>
+
+                    <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
+                    <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Posted on {new Date(post.created_at).toLocaleDateString()}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSelectedPostId(prev => (prev === post.id ? null : post.id));
+                        if (!comments[post.id]) fetchComments(post.id);
+                      }}
+                      className="mt-4 flex items-center space-x-2 text-purple-600 hover:text-purple-700 dark:text-purple-300 dark:hover:text-purple-200"
+                    >
+                      <FaComment />
+                      <span>{post.comments_count || 0} comments</span>
+                    </button>
                   </div>
-                )}
 
-                <div className="flex items-center space-x-2 mb-4">
-                  <img
-                    src={authorAvatars[post.author_details?.id] || '/ProfileDefaultAvatar.jpg'}
-                    alt="Author Profile"
-                    className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700"
-                  />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {post.author_details?.username || 'Unknown'}
-                  </span>
+                  {/* Comments sidebar */}
+                  {selectedPostId === post.id && (
+                    <div className="w-full md:w-96 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 shadow-lg p-4">
+                      <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                        Comments
+                      </h3>
+                      <div className="flex-1 overflow-y-auto max-h-96 pr-2 space-y-2">
+                        {comments[post.id]?.map(c => (
+                          <Comment key={c.id} comment={c} authorAvatars={authorAvatars} />
+                        ))}
+                      </div>
+                      <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            value={newComment}
+                            onChange={e => setNewComment(e.target.value)}
+                            placeholder="Add a comment..."
+                            className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          />
+                          <button
+                            onClick={() => handleCommentSubmit(post.id)}
+                            className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors"
+                          >
+                            <FaPaperPlane />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Posted on{' '}
-                  {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}
-                </p>
-              </div>
-            ))
-          )}
+              ))}
         </div>
       </div>
     </div>

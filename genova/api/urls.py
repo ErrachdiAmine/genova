@@ -9,7 +9,11 @@ urlpatterns = [
   path('users/<int:user_id>/', UserDetailView.as_view(), name='user-detail'),
   path('users/<int:pk>/profile/', ProfileView.as_view(), name='profile'),
   path('posts/', PostsView.as_view(), name='posts'),
+  path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+  path('posts/<int:pk>/like/', PostDetailView.as_view(), name='like-post'),
+  path('posts/<int:pk>/unlike/', PostDetailView.as_view(), name='unlike-post'),
+  path('posts/<int:pk>/comment/', PostDetailView.as_view(), name='comment-post'),
   path('posts/my-posts/', Myposts.as_view(), name='my-posts'),
-  path('posts/my-posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+  path('posts/my-posts/<int:pk>/', PostDetailView.as_view(), name='user-post-detail'),
   path('check-login-status/', check_login_status, name='check-login-status'),
 ]
