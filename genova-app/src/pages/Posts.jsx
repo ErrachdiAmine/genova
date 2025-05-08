@@ -231,7 +231,7 @@ const Posts = () => {
                       className="mt-4 flex items-center space-x-2 text-purple-600 hover:text-purple-700 dark:text-purple-300 dark:hover:text-purple-200"
                     >
                       <FaComment />
-                      <span>{post.comments_count || 0} comments</span>
+                      <span>{post.comment_count || 0} comments</span>
                     </button>
                   </div>
 
