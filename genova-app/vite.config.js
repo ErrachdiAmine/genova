@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { mode } from '@cloudinary/url-gen/actions/rotate'
 
 // https://vite.dev/config/
 export default defineConfig({
