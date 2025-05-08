@@ -1,6 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { mode } from '@cloudinary/url-gen/actions/rotate'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,10 +9,10 @@ export default defineConfig({
     sourcemap: false, // Enable source maps
   },
   define: {
-    'import.meta.env.PROD': mode === 'production',
-    'import.meta.env.VERCEL': JSON.stringify(process.env.VERCEL || false)
+    'import.meta.env.PROD': process.env.NODE_ENV === 'production',
+    'import.meta.env.VERCEL': JSON.stringify(process.env.VERCEL || false),
   },
   server: {
     port: 5173,
-  }
-})
+  },
+});
