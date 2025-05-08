@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { getAccessToken } from '../auth';
+import React, { useState, useEffect, useCallback } from 'react';
+import { getAccessToken, getCurrentUser } from '../auth';
 import axios from 'axios';
 import { FaEllipsisV } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
-import {Link} from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const PostSkeleton = () => {
   const isDarkMode = typeof window !== 'undefined' && localStorage.getItem('theme') === 'dark';
@@ -36,47 +35,80 @@ const Posts = () => {
   const [postTitle, setPostTitle] = useState('');
   const [postBody, setPostBody] = useState('');
   const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState(null);
+  const [authorAvatars, setAuthorAvatars] = useState({});
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const dropdownRef = useRef(null);
   const API_URL = "https://genova-gsaa.onrender.com";
+  const access = getAccessToken();
 
   useEffect(() => {
     const isDarkMode = localStorage.getItem('theme') === 'dark';
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, []);
 
-  const fetchData = async () => {
+  const fetchAuthorProfile = useCallback(async (authorId) => {
+    if (!authorId) return;
+    if (authorAvatars[authorId]) return; // Already fetched
+
     try {
-      const postsResponse = await axios.get(`${API_URL}/api/posts/`);
-      const postsData = postsResponse.data;
-      const sortedPosts = postsData.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      const response = await axios.get(`${API_URL}/api/users/${authorId}/profile`, {
+        headers: { 'Authorization': `Bearer ${access}` }
+      });
+      setAuthorAvatars(prev => ({ ...prev, [authorId]: response.data.profile_image }));
+    } catch (error) {
+      console.error(`Error fetching profile for author ${authorId}:`, error);
+      setAuthorAvatars(prev => ({ ...prev, [authorId]: '/ProfileDefaultAvatar.jpg' }));
+    }
+  }, [API_URL, access, authorAvatars]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${API_URL}/api/posts/`);
+      const sortedPosts = data.sort((a, b) => 
+        new Date(b.created_at) - new Date(a.created_at)
       );
       setPosts(sortedPosts);
+
+      // Fetch author profiles for all posts
+      const uniqueAuthorIds = [...new Set(sortedPosts.map(post => post.author_details?.id).filter(Boolean))];
+      uniqueAuthorIds.forEach(authorId => {
+        fetchAuthorProfile(authorId);
+      });
     } catch (error) {
-      alert('Failed to load posts.');
+      toast.error('Failed to load posts.');
       console.error('Error fetching posts:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL, fetchAuthorProfile]);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+        }
+      } catch (error) {
+        toast.error('Failed to load user data');
+      }
+    };
+    loadUserData();
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
-  
-  const toggleDropdown = (postId) => {
-    setShowDropdown(showDropdown === postId ? null : postId);
-  };
+  }, [fetchData]);
 
-  const handleSubmit = async (e) => {
+  const toggleDropdown = useCallback((postId) => {
+    setShowDropdown(prev => prev === postId ? null : postId);
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    const token = getAccessToken();
-    if (!token) {
-      alert('You must be logged in to perform this action.');
+    if (!access) {
+      toast.error('You must be logged in to perform this action.');
       return;
     }
 
@@ -84,39 +116,25 @@ const Posts = () => {
       await axios.post(
         `${API_URL}/api/posts/`,
         { title: postTitle, body: postBody },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${access}` } }
       );
-      alert('Post created successfully!');
+      toast.success('Post created successfully!');
       setPostTitle('');
       setPostBody('');
       setShowForm(false);
       await fetchData();
     } catch (error) {
+      toast.error('Failed to create post');
       console.error('Error posting:', error);
     }
-  };
-
-  
-  useEffect(() => {
-    const loadUserData = async () => {
-        try {
-            const currentUser = await getCurrentUser();
-            setUser(currentUser);
-            setLoadingStates(prev => ({...prev, user: false}));
-        } catch (error) {
-            toast.error('Failed to load user data');
-            setLoadingStates(prev => ({...prev, user: false}));
-        }
-    };
-    loadUserData();
-  }, []);
+  }, [access, postTitle, postBody, API_URL, fetchData]);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-16">
       <h1 className="text-4xl text-center font-bold mb-8">Posts</h1>
 
       <div className="w-full max-w-3xl space-y-8">
-        {!showForm && getAccessToken() && (
+        {!showForm && access && (
           <button
             onClick={() => setShowForm(true)}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200"
@@ -171,7 +189,7 @@ const Posts = () => {
                 key={post.id}
                 className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative"
               >
-                {getAccessToken() && (
+                {access && (
                   <div className="absolute top-4 right-4">
                     <button
                       onClick={() => toggleDropdown(post.id)}
@@ -191,11 +209,19 @@ const Posts = () => {
                   </div>
                 )}
 
+                <div className="flex items-center space-x-2 mb-4">
+                  <img
+                    src={authorAvatars[post.author_details?.id] || '/ProfileDefaultAvatar.jpg'}
+                    alt="Author Profile"
+                    className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+                  />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {post.author_details?.username || 'Unknown'}
+                  </span>
+                </div>
+
                 <h3 className="text-2xl font-bold mb-2">{post.title}</h3>
                 <p className="mb-4 text-gray-700 dark:text-gray-300">{post.body}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">  
-                  {post.author_details?.username || 'Unknown'}
-                </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Posted on{' '}
                   {new Date(post.created_at).toLocaleDateString()} {new Date(post.created_at).toLocaleTimeString()}

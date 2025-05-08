@@ -103,3 +103,4 @@ export const getCurrentUser = async () => {
   
   return response.data; // Return the logged-in user
 }
+
