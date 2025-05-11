@@ -28,7 +28,7 @@ const Comment = ({ comment, authorAvatars }) => (
     <img
       src={authorAvatars[comment.author.id]|| '/ProfileDefaultAvatar.jpg'}
       alt="Commenter"
-      className="w-6 h-6 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+      className="w-6 h-6 rounded-full object-cover font-bold border border-gray-300 dark:border-gray-600 shadow-sm"
     />
     <div className="flex-1">
       <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -251,7 +251,7 @@ const Posts = () => {
                       className="mt-4 flex items-center space-x-2 text-purple-600 hover:text-purple-700 dark:text-purple-300 dark:hover:text-purple-200"
                     >
                       <FaComment />
-                      <span>{post.comment_count || 0} comments</span>
+                      <span>comments</span>
                     </button>
                   </div>
 
@@ -272,7 +272,7 @@ const Posts = () => {
                             type="text"
                             value={newComment}
                             onChange={e => setNewComment(e.target.value)}
-                            placeholder="Add a comment..."
+                            placeholder="What do you think...?"
                             className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                           />
                           <button
