@@ -78,13 +78,10 @@ const AccountSettingsSkeleton = () => (
 );
 
 const Profile = () => {
-
-
   useEffect(() => {
     const isDarkMode = localStorage.getItem('theme') === 'dark';
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, []);
-
 
   const [loadingStates, setLoadingStates] = useState({
     header: true,
@@ -112,7 +109,7 @@ const Profile = () => {
   };
 
   const handleAvatarUpdate = async () => {
-    if (avatar) {
+    if (avatar && user && user.id) {
       try {
         const formData = new FormData();
         formData.append('profile_image', fileInputRef.current.files[0]);
@@ -135,25 +132,24 @@ const Profile = () => {
     const updateAvatar = async () => {
       if (avatar) {
         const updatedAvatar = await handleAvatarUpdate();
-        setCurrentAvatar(updatedAvatar.profile_image);
+        setCurrentAvatar(updatedAvatar?.profile_image);
         setAvatar(null);
       }
     };
     updateAvatar();
   }, [avatar]);
 
-  
-
   useEffect(() => {
     const loadUserData = async () => {
       try {
         const userData = await getCurrentUser();
+        console.log(userData);
         setUser(userData);
-        
-        setTimeout(() => setLoadingStates(s => ({...s, header: false})), 500);
-        setTimeout(() => setLoadingStates(s => ({...s, info: false})), 800);
-        setTimeout(() => setLoadingStates(s => ({...s, posts: false})), 1200);
-        setTimeout(() => setLoadingStates(s => ({...s, settings: false})), 1500);
+
+        setTimeout(() => setLoadingStates(s => ({ ...s, header: false })), 500);
+        setTimeout(() => setLoadingStates(s => ({ ...s, info: false })), 800);
+        setTimeout(() => setLoadingStates(s => ({ ...s, posts: false })), 1200);
+        setTimeout(() => setLoadingStates(s => ({ ...s, settings: false })), 1500);
       } catch (error) {
         console.error('Error loading user data:', error);
       }
@@ -161,8 +157,11 @@ const Profile = () => {
     loadUserData();
   }, []);
 
-
   const fetshUserProfile = async () => {
+    if (!user || !user.id) {
+      console.warn('Invalid user or user id, skipping profile fetch');
+      return;
+    }
     try {
       const response = await axios.get(`${API_URL}/api/users/${user.id}/profile`, {
         headers: { 'Authorization': `Bearer ${access}` }
@@ -173,47 +172,51 @@ const Profile = () => {
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
       fetshUserProfile();
     }
-  } , [user]);
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center p-4 pt-20">
       <div className="w-full max-w-4xl space-y-8">
         {/* Profile Header */}
-        {loadingStates.header ? <ProfileHeaderSkeleton /> : (
+        {loadingStates.header ? (
+          <ProfileHeaderSkeleton />
+        ) : (
           <div className="flex flex-col items-center space-y-4">
             <div className="relative group">
-              <img 
-                src={currentAvatar} 
+              <img
+                src={currentAvatar}
                 className="w-32 h-32 rounded-full border-4 border-purple-500 dark:border-purple-600 object-cover"
               />
-              <label 
-                htmlFor="profileUpload" 
+              <label
+                htmlFor="profileUpload"
                 className="absolute bottom-0 right-0 bg-purple-500 hover:bg-purple-600 text-white rounded-full p-2 shadow-lg transition duration-200 transform group-hover:scale-110 cursor-pointer"
               >
                 <FaEdit className="w-5 h-5" />
-                <input 
-                  type="file" 
-                  id="profileUpload" 
+                <input
+                  type="file"
+                  id="profileUpload"
                   ref={fileInputRef}
-                  accept="image/*" 
+                  accept="image/*"
                   onChange={handleAvatarUpload}
-                  className="hidden" 
+                  className="hidden"
                 />
               </label>
             </div>
-            <h1 className="text-3xl font-bold">{user.firstname}</h1>
-            <p className="text-gray-600 dark:text-gray-300">@{user.username}</p>
+            <h1 className="text-3xl font-bold">{`${user?.first_name} ${user?.last_name}` || 'Unknown'}</h1>
+            <p className="text-gray-600 dark:text-gray-300">@{user?.username || 'unknown'}</p>
           </div>
         )}
 
         {/* User Information */}
-        {loadingStates.info ? <UserInfoSkeleton /> : (
+        {loadingStates.info ? (
+          <UserInfoSkeleton />
+        ) : (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-4">
             <h2 className="text-2xl font-semibold mb-4 flex items-center">
               <FaUser className="mr-2 text-purple-500" />
@@ -223,19 +226,21 @@ const Profile = () => {
               <div className="flex items-center space-x-2">
                 <FaEnvelope className="text-gray-500 dark:text-gray-300" />
                 <span className="font-medium">Email:</span>
-                <span>{user.email}</span>
+                <span>{user?.email || 'N/A'}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <FaCalendar className="text-gray-500 dark:text-gray-300" />
                 <span className="font-medium">Joined:</span>
-                <span>{new Date(user.date_joined).toLocaleDateString()}</span>
+                <span>{user?.date_joined ? new Date(user.date_joined).toLocaleDateString() : 'N/A'}</span>
               </div>
             </div>
           </div>
         )}
 
         {/* Posts Management */}
-        {loadingStates.posts ? <PostsManagementSkeleton /> : (
+        {loadingStates.posts ? (
+          <PostsManagementSkeleton />
+        ) : (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-semibold mb-4 flex items-center">
               <FaNewspaper className="mr-2 text-purple-500" />
@@ -244,15 +249,11 @@ const Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h3 className="text-lg font-semibold mb-2">Your Activity</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Total Posts: {user.postsCount || 0}
-                </p>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Latest Post: 2 days ago
-                </p>
+                <p className="text-gray-600 dark:text-gray-300">Total Posts: {user?.postsCount || 0}</p>
+                <p className="text-gray-600 dark:text-gray-300">Latest Post: 2 days ago</p>
               </div>
               <div className="space-y-4">
-                <Link 
+                <Link
                   to="/profile/my-posts"
                   className="w-full bg-purple-500 dark:bg-purple-600 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
                 >
@@ -268,7 +269,9 @@ const Profile = () => {
         )}
 
         {/* Account Settings */}
-        {loadingStates.settings ? <AccountSettingsSkeleton /> : (
+        {loadingStates.settings ? (
+          <AccountSettingsSkeleton />
+        ) : (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-semibold mb-4">Account Settings</h2>
             <div className="space-y-2">
