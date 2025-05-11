@@ -63,6 +63,25 @@ const Posts = () => {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, []);
 
+
+  const handlePostSubmit = async () => {
+    if (!postTitle.trim() || !postBody.trim()) return;
+    try {
+      await axios.post(
+        `${API_URL}/api/posts/`,
+        { title: postTitle, body: postBody },
+        { headers: { Authorization: `Bearer ${access}` } }
+      );
+      setPostTitle('');
+      setPostBody('');
+      setShowForm(false);
+      toast.success('Post created successfully!');
+      fetchData();
+    } catch (error) {
+      toast.error('Failed to create post');
+    }
+  };
+
   const fetchAuthorProfile = useCallback(async (authorId) => {
     if (!authorId || authorAvatars[authorId]) return;
     try {
@@ -170,7 +189,7 @@ const Posts = () => {
               </button>
               <button
                 type="button"
-                onClick={() => handleCommentSubmit(selectedPostId)}
+                onClick={() => handlePostSubmit()}
                 className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200"
               >
                 Post
