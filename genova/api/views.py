@@ -3,7 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.shortcuts import get_object_or_404
 from core.models import Profile, User, Post, Comment
+from django.db.models import Count
 from .serializers import UserSerializer, PostSerializer, ProfileSerializer, CommentSerializer
 
 # Fixed check_login_status view
@@ -149,7 +151,7 @@ class PostsView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsPostAuthor]
 
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.all().annotate(comment_count=Count('post_comments'))
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)    
 
@@ -192,56 +194,96 @@ class PostsView(APIView):
             return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class CommentView(APIView):
+class CommentListCreateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    def get(self, request, post_id):
+        """
+        List all comments for a given post.
+        """
+        comments = Comment.objects.filter(post_id=post_id)
+        serializer = CommentSerializer(
+            comments,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
 
-    def get(self, request, pk=None):
-        try:
-            post = Post.objects.get(pk=pk)
-            comments = post.comments.all()
-            serializer = CommentSerializer(comments, many=True)
+    def post(self, request, post_id):
+        """
+        Create a new comment on a given post.
+        """
+        serializer = CommentSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        if serializer.is_valid():
+            # Attach the author and post before saving
+            serializer.save(
+                author=request.user,
+                post_id=post_id
+            )
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class CommentDetailView(APIView):
+    permission_classes = [UserAccessPermission]
+
+    def get_object(self, pk):
+        """
+        Helper to retrieve the Comment instance.
+        """
+        comment = get_object_or_404(Comment, pk=pk)
+        # Enforce object-level permissions
+        self.check_object_permissions(self.request, comment)
+        return comment
+
+    def get(self, request, pk):
+        """
+        Retrieve a single comment by ID.
+        """
+        comment = self.get_object(pk)
+        serializer = CommentSerializer(
+            comment,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        """
+        Update an existing comment.
+        """
+        comment = self.get_object(pk)
+        serializer = CommentSerializer(
+            comment,
+            data=request.data,
+            partial=True,
+            context={'request': request}
+        )
+        if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data)
-        except Post.DoesNotExist:
-            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-    def post(self, request, pk=None):
-        try:
-            post = Post.objects.get(pk=pk)
-            serializer = CommentSerializer(
-                data=request.data,
-                context={'request': request}
-            )
-            if serializer.is_valid():
-                serializer.save(author=request.user, post=post)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Post.DoesNotExist:
-            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-    def put(self, request, pk=None):
-        try:
-            comment = Comment.objects.get(pk=pk)
-            serializer = CommentSerializer(
-                comment,
-                data=request.data,
-                context={'request': request}
-            )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Comment.DoesNotExist:
-            return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-    def delete(self, request, pk=None):
-        try:
-            comment = Comment.objects.get(pk=pk)
-            comment.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Comment.DoesNotExist:
-            return Response({'error': 'Comment not found'}, status=status.HTTP_404_NOT_FOUND)
-        
+    def delete(self, request, pk):
+        """
+        Delete a comment.
+        """
+        comment = self.get_object(pk)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class PostDetailView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsPostAuthor]
