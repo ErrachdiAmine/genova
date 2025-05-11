@@ -26,13 +26,13 @@ const PostSkeleton = () => (
 const Comment = ({ comment, authorAvatars }) => (
   <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
     <img
-      src={authorAvatars[comment.author] || '/ProfileDefaultAvatar.jpg'}
+      src={authorAvatars[comment.author.id]|| '/ProfileDefaultAvatar.jpg'}
       alt="Commenter"
       className="w-6 h-6 rounded-full object-cover border border-gray-300 dark:border-gray-600"
     />
     <div className="flex-1">
       <p className="text-sm text-gray-600 dark:text-gray-300">
-        <span className="font-medium">{comment.author_details?.username || 'Anonymous'}</span>
+        <span className="font-medium">{comment.author?.username || 'Anonymous'}</span>
         <span className="ml-2">{comment.body}</span>
       </p>
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -109,6 +109,7 @@ const Posts = () => {
     try {
       const { data } = await axios.get(`${API_URL}/api/posts/${postId}/comments/`);
       setComments(prev => ({ ...prev, [postId]: data }));
+      console.log('Comments:', data);
     } catch (error) {
       toast.error('Failed to load comments');
     }
